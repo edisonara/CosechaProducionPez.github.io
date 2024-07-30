@@ -1,0 +1,154 @@
+-- Crear esquemas
+CREATE SCHEMA Cosecha;
+CREATE SCHEMA Comercializacion;
+
+-- Crear tablas en el esquema Cosecha
+SET search_path TO Cosecha;
+
+CREATE TABLE Peces (
+    id_pez SERIAL PRIMARY KEY,
+    nombre VARCHAR NOT NULL,
+    informacion TEXT
+);
+
+CREATE TABLE Control_Salud (
+    id_control SERIAL,
+    estanque_id INT,
+    fecha_control DATE NOT NULL,
+    resultado TEXT,
+    Estabilidad INT,
+    PRIMARY KEY (id_control, fecha_control)
+) PARTITION BY RANGE (fecha_control);
+
+-- Crear particiones para Control_Salud
+CREATE TABLE Control_Salud_2024_01 PARTITION OF Control_Salud
+    FOR VALUES FROM ('2024-01-01') TO ('2024-02-01');
+CREATE TABLE Control_Salud_2024_02 PARTITION OF Control_Salud
+    FOR VALUES FROM ('2024-02-01') TO ('2024-03-01');
+
+CREATE TABLE Estanques (
+    id_estanque SERIAL PRIMARY KEY,
+    pez_id INT,
+    ubicacion VARCHAR NOT NULL,
+    capacidad FLOAT NOT NULL,
+    alimentacion_id INT,
+    empleado_id INT,
+    cantidad INT,
+    fecha_cosecha DATE
+);
+
+CREATE TABLE Alimentacion (
+    id_alimentacion SERIAL PRIMARY KEY,
+    tipo_alimento VARCHAR NOT NULL
+);
+
+CREATE TABLE Trabajador (
+    id_trabajador SERIAL PRIMARY KEY,
+    nombre VARCHAR NOT NULL,
+    apellido VARCHAR NOT NULL,
+    email VARCHAR,
+    direccion VARCHAR,
+    telefono VARCHAR
+);
+
+CREATE TABLE Trabajo (
+    id_trabajo SERIAL PRIMARY KEY,
+    nombre VARCHAR NOT NULL,
+    descripcion TEXT
+);
+
+CREATE TABLE Asignacion (
+    id_asignacion SERIAL PRIMARY KEY,
+    trabajador_id INT,
+    trabajo_id INT,
+    fecha_asignacion DATE
+);
+
+-- Agregar claves foráneas para el esquema de cosecha
+ALTER TABLE Control_Salud
+ADD CONSTRAINT fk_control_salud_estanque
+FOREIGN KEY (estanque_id) REFERENCES Estanques(id_estanque);
+
+ALTER TABLE Estanques
+ADD CONSTRAINT fk_estanques_pez
+FOREIGN KEY (pez_id) REFERENCES Peces(id_pez),
+ADD CONSTRAINT fk_estanques_alimentacion
+FOREIGN KEY (alimentacion_id) REFERENCES Alimentacion(id_alimentacion),
+ADD CONSTRAINT fk_estanques_trabajador
+FOREIGN KEY (empleado_id) REFERENCES Asignacion(id_asignacion);
+
+ALTER TABLE Asignacion
+ADD CONSTRAINT fk_asignacion_trabajador
+FOREIGN KEY (trabajador_id) REFERENCES Trabajador(id_trabajador),
+ADD CONSTRAINT fk_asignacion_trabajo
+FOREIGN KEY (trabajo_id) REFERENCES Trabajo(id_trabajo);
+
+-- Crear tablas en el esquema Comercializacion
+SET search_path TO Comercializacion;
+
+CREATE TABLE Cliente (
+    id_cliente SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    direccion VARCHAR(150),
+    email VARCHAR(100),
+    telefono VARCHAR(20)
+);
+
+CREATE TABLE Detalle_venta (
+    id_detalle_venta SERIAL PRIMARY KEY,
+    cliente_id INT,
+    estanque_id INT,
+    fecha_pedido DATE NOT NULL,
+    fecha_entrega DATE,
+    cantidad INT NOT NULL,
+    precio FLOAT NOT NULL
+);
+
+CREATE TABLE Factura (
+    id_factura SERIAL PRIMARY KEY,
+    pedidos_id INT,
+    encargado_id INT,
+    fecha_factura DATE NOT NULL
+);
+
+-- Agregar claves foráneas para el esquema de comercialización
+ALTER TABLE Detalle_venta
+ADD CONSTRAINT fk_detalle_venta_cliente
+FOREIGN KEY (cliente_id) REFERENCES Cliente(id_cliente),
+ADD CONSTRAINT fk_detalle_venta_estanque
+FOREIGN KEY (estanque_id) REFERENCES Cosecha.Estanques(id_estanque);
+
+ALTER TABLE Factura
+ADD CONSTRAINT fk_factura_pedidos
+FOREIGN KEY (pedidos_id) REFERENCES Detalle_venta(id_detalle_venta),
+ADD CONSTRAINT fk_factura_encargado
+FOREIGN KEY (encargado_id) REFERENCES Cosecha.Asignacion(id_asignacion);
+
+-- Crear índices para mejorar el rendimiento
+CREATE INDEX idx_nombre_pez ON Cosecha.Peces(nombre);
+CREATE INDEX idx_fecha_control ON Cosecha.Control_Salud(fecha_control);
+
+-- Crear roles
+CREATE ROLE admin_cosecha;
+CREATE ROLE admin_comercializacion;
+CREATE ROLE rol_general;
+
+-- Asignar permisos a los roles
+GRANT USAGE ON SCHEMA Cosecha TO admin_cosecha, admin_comercializacion, rol_general;
+GRANT USAGE ON SCHEMA Comercializacion TO admin_cosecha, admin_comercializacion, rol_general;
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA Cosecha TO admin_cosecha;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA Comercializacion TO admin_comercializacion;
+GRANT SELECT ON ALL TABLES IN SCHEMA Cosecha, Comercializacion TO rol_general;
+
+-- Crear vistas
+CREATE VIEW Cosecha.vista_peces AS
+SELECT id_pez, nombre FROM Cosecha.Peces;
+
+CREATE VIEW Comercializacion.vista_detalle_ventas AS
+SELECT id_detalle_venta, cliente_id, estanque_id, fecha_pedido, cantidad, precio
+FROM Comercializacion.Detalle_venta;
+
+-- Asignar permisos a las vistas
+GRANT SELECT ON Cosecha.vista_peces TO admin_cosecha, admin_comercializacion, rol_general;
+GRANT SELECT ON Comercializacion.vista_detalle_ventas TO admin_cosecha, admin_comercializacion, rol_general;
