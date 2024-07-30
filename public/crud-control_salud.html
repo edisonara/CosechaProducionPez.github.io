@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Control de Salud</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 600px;
+            margin-top: 50px;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        }
+        .form-group label {
+            font-weight: bold;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-info">
+        <a class="navbar-brand" href="#">
+            <img src="/public/imagenes/logo.jpeg" alt="logo" style="width:40px;">
+        </a>
+        <a class="navbar-brand" href="/public/index.html">BeastComplay</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="collapsibleNavId">
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="nosotros.html">Sobre nosotros</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="alimentacion.html">CRUD de Alimentación</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="asignacion.html">CRUD de Asignación</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">CRUD de Clientes</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <h1 class="text-center mb-4">Registrar Control de Salud</h1>
+        <form id="controlSaludForm">
+            <div class="form-group">
+                <label for="estanque_id">ID Estanque</label>
+                <input type="number" class="form-control" id="estanque_id" required>
+            </div>
+            <div class="form-group">
+                <label for="fecha_control">Fecha de Control</label>
+                <input type="date" class="form-control" id="fecha_control" required>
+            </div>
+            <div class="form-group">
+                <label for="estabilidad">Estabilidad</label>
+                <input type="number" class="form-control" id="estabilidad" required>
+            </div>
+            <div class="form-group">
+                <label for="resultado">Resultado</label>
+                <textarea class="form-control" id="resultado" rows="3" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Enviar</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('controlSaludForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const estanque_id = document.getElementById('estanque_id').value;
+            const fecha_control = document.getElementById('fecha_control').value;
+            const estabilidad = document.getElementById('estabilidad').value;
+            const resultado = document.getElementById('resultado').value;
+
+            const response = await fetch('http://localhost:3000/submit-control-salud', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    estanque_id,
+                    fecha_control,
+                    estabilidad,
+                    resultado
+                })
+            });
+
+            if (response.ok) {
+                alert('Datos insertados correctamente');
+            } else {
+                alert('Error al insertar los datos');
+            }
+        });
+    </script>
+</body>
+</html>

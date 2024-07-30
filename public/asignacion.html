@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD de Asignación - BeastComplay</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/bootstrap-grid.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="loader-container" id="loader">
+        <div class="loader"></div>
+    </div>
+    <div class="content" id="content">
+        <nav class="navbar navbar-expand-lg navbar-light bg-success fixed-top">
+            <a class="navbar-brand" href="index.html">BeastComplay</a>
+            <button class="navbar-toggler hidden-lg-up" type="button" data-toggle="collapse" data-target="#collapsibleNavId" aria-controls="collapsibleNavId"
+                aria-expanded="false" aria-label="Toggle navigation"></button>
+            <div class="collapse navbar-collapse" id="collapsibleNavId">
+                <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="nosotros.html">Sobre nosotros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="alimentacion.html">CRUD de Alimentación</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="asignacion.html">CRUD de Asignación <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">CRUD de Clientes</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <hr><hr><hr>
+        <div class="container mt-5">
+            <h2>CRUD de Asignación</h2>
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <form id="asignacionForm">
+                        <div class="form-group">
+                            <label for="nombreCliente">Nombre del Cliente:</label>
+                            <input type="text" class="form-control" id="nombreCliente" placeholder="Ingrese el nombre del cliente" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tipoServicio">Tipo de Servicio:</label>
+                            <input type="text" class="form-control" id="tipoServicio" placeholder="Ingrese el tipo de servicio" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Agregar</button>
+                    </form>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <h3>Listado de Asignaciones</h3>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre del Cliente</th>
+                                <th>Tipo de Servicio</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="asignacionesTableBody">
+                            <!-- Aquí se cargarán los datos dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <footer class="bg-dark text-light mt-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Información de Contacto</h5>
+                        <p>Dirección: Universidad de las Fuerzas Armadas ESPE</p>
+                        <p>Email: jaguevara11@espe.edu.ec</p>
+                        <p>Teléfono: +123 456 7890</p>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <p>© 2024 BeastComplay. Todos los derechos reservados.</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="js/carga.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Función para cargar las asignaciones desde la base de datos
+            function cargarAsignaciones() {
+                // Hacer una petición AJAX al backend para obtener las asignaciones
+                $.ajax({
+                    url: '/api/asignaciones', // Endpoint del backend para obtener asignaciones
+                    method: 'GET',
+                    success: function(data) {
+                        // Limpiar la tabla
+                        $('#asignacionesTableBody').empty();
+                        // Iterar sobre los datos y agregar cada asignación a la tabla
+                        data.forEach(function(asignacion) {
+                            $('#asignacionesTableBody').append(`
+                                <tr>
+                                    <td>${asignacion.id_asignacion}</td>
+                                    <td>${asignacion.nombre_cliente}</td>
+                                    <td>${asignacion.tipo_servicio}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info editarBtn" data-id="${asignacion.id_asignacion}">Editar</button>
+                                        <button class="btn btn-sm btn-danger eliminarBtn" data-id="${asignacion.id_asignacion}">Eliminar</button>
+                                    </td>
+                                </tr>
+                            `);
+                        });
+                    },
+                    error: function(err) {
+                        console.error('Error al cargar asignaciones:', err);
+                    }
+                });
+            }
+
+            // Cargar las asignaciones al cargar la página
+            cargarAsignaciones();
+
+            // Manejar el envío del formulario para agregar una nueva asignación
+            $('#asignacionForm').submit(function(event) {
+                event.preventDefault();
+                // Obtener los datos del formulario
+                const nombreCliente = $('#nombreCliente').val();
+                const tipoServicio = $('#tipoServicio').val();
+                // Hacer una petición AJAX para agregar la asignación
+                $.ajax({
+                    url: '/api/asignaciones', // Endpoint del backend para agregar asignaciones
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ nombre_cliente: nombreCliente, tipo_servicio: tipoServicio }),
+                    success: function(data) {
+                        // Limpiar el formulario
+                        $('#nombreCliente').val('');
+                        $('#tipoServicio').val('');
+                        // Volver a cargar las asignaciones
+                        cargarAsignaciones();
+                    },
+                    error: function(err) {
+                        console.error('Error al agregar asignación:', err);
+                    }
+                });
+            });
+
+            // Evento delegado para botones de editar y eliminar
+            $('#asignacionesTableBody').on('click', '.editarBtn', function() {
+                const idAsignacion = $(this).data('id');
+                // Implementar lógica para editar una asignación (opcional)
+                console.log('Editar asignación con ID:', idAsignacion);
+            });
+
+            $('#asignacionesTableBody').on('click', '.eliminarBtn', function() {
+                const idAsignacion = $(this).data('id');
+                $.ajax({
+                    url: `/api/asignaciones/${idAsignacion}`, // Endpoint del backend para eliminar asignaciones
+                    method: 'DELETE',
+                    success: function(data) {
+                        // Volver a cargar las asignaciones después de eliminar
+                        cargarAsignaciones();
+                    },
+                    error: function(err) {
+                        console.error('Error al eliminar asignación:', err);
+                    }
+                });
+                console.log('Eliminar asignación con ID:', idAsignacion);
+            });
+        });
+    </script>
+</body>
+</html>

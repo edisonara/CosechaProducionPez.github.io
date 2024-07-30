@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Estanques</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-light bg-success fixed-top">
+            <a class="navbar-brand" href="/public/index.html">BeastComplay</a>
+            <button class="navbar-toggler hidden-lg-up" type="button" data-toggle="collapse" data-target="#collapsibleNavId" aria-controls="collapsibleNavId"
+                aria-expanded="false" aria-label="Toggle navigation"></button>
+            <div class="collapse navbar-collapse" id="collapsibleNavId">
+                <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="nosotros.html">Sobre nosotros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="alimentacion.html">CRUD de Alimentación</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="asignacion.html">CRUD de Asignación</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">CRUD de Clientes</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <h1 class="mt-5">Insertar Datos en la Tabla Estanques</h1>
+        <form id="estanquesForm" method="post">
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="pez_id">Pez ID:</label>
+                    <input type="number" class="form-control" id="pez_id" name="pez_id" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="ubicacion">Ubicación:</label>
+                    <input type="text" class="form-control" id="ubicacion" name="ubicacion" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="capacidad">Capacidad (L):</label>
+                    <input type="number" class="form-control" id="capacidad" name="capacidad" step="0.01" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="alimentacion_id">ID Alimentación:</label>
+                    <input type="number" class="form-control" id="alimentacion_id" name="alimentacion_id" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="empleado_id">ID Empleado:</label>
+                    <input type="number" class="form-control" id="empleado_id" name="empleado_id" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="cantidad">Cantidad:</label>
+                    <input type="number" class="form-control" id="cantidad" name="cantidad" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="fecha_cosecha">Fecha de Cosecha:</label>
+                    <input type="date" class="form-control" id="fecha_cosecha" name="fecha_cosecha">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Insertar</button>
+        </form>
+
+        <h2 class="mt-5">Buscar Estanque por ID</h2>
+        <form id="buscarForm" method="get" class="form-inline">
+            <div class="form-group mb-2">
+                <label for="buscar_id" class="sr-only">ID Estanque:</label>
+                <input type="number" class="form-control" id="buscar_id" name="buscar_id" placeholder="ID Estanque">
+            </div>
+            <button type="submit" class="btn btn-primary mb-2">Buscar</button>
+        </form>
+        <div id="buscarResult" class="mt-3"></div>
+
+        <h2 class="mt-5">Lista de Estanques</h2>
+        <button id="listarButton" class="btn btn-secondary mb-3">Listar Estanques</button>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID Estanque</th>
+                    <th>Pez ID</th>
+                    <th>Ubicación</th>
+                    <th>Capacidad (L)</th>
+                    <th>ID Alimentación</th>
+                    <th>ID Empleado</th>
+                    <th>Cantidad</th>
+                    <th>Fecha de Cosecha</th>
+                </tr>
+            </thead>
+            <tbody id="estanquesTableBody">
+                <!-- Los registros se agregarán aquí -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.getElementById('estanquesForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const formData = {
+                pez_id: document.getElementById('pez_id').value,
+                ubicacion: document.getElementById('ubicacion').value,
+                capacidad: document.getElementById('capacidad').value,
+                alimentacion_id: document.getElementById('alimentacion_id').value,
+                empleado_id: document.getElementById('empleado_id').value,
+                cantidad: document.getElementById('cantidad').value,
+                fecha_cosecha: document.getElementById('fecha_cosecha').value
+            };
+
+            const response = await fetch('/estanques', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const data = await response.json();
+            alert(data.message);
+        });
+
+        document.getElementById('buscarForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const id = document.getElementById('buscar_id').value;
+
+            const response = await fetch(`/estanques/${id}`);
+            const data = await response.json();
+
+            const resultDiv = document.getElementById('buscarResult');
+            if (data.message) {
+                resultDiv.textContent = data.message;
+            } else {
+                resultDiv.innerHTML = `
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>ID Estanque</th>
+                            <td>${data.id_estanque}</td>
+                        </tr>
+                        <tr>
+                            <th>Pez ID</th>
+                            <td>${data.pez_id}</td>
+                        </tr>
+                        <tr>
+                            <th>Ubicación</th>
+                            <td>${data.ubicacion}</td>
+                        </tr>
+                        <tr>
+                            <th>Capacidad</th>
+                            <td>${data.capacidad}</td>
+                        </tr>
+                        <tr>
+                            <th>ID Alimentación</th>
+                            <td>${data.alimentacion_id}</td>
+                        </tr>
+                        <tr>
+                            <th>ID Empleado</th>
+                            <td>${data.empleado_id}</td>
+                        </tr>
+                        <tr>
+                            <th>Cantidad</th>
+                            <td>${data.cantidad}</td>
+                        </tr>
+                        <tr>
+                            <th>Fecha de Cosecha</th>
+                            <td>${data.fecha_cosecha}</td>
+                        </tr>
+                    </table>
+                `;
+            }
+        });
+
+        document.getElementById('listarButton').addEventListener('click', async () => {
+            const response = await fetch('/estanques');
+            const data = await response.json();
+
+            const tableBody = document.getElementById('estanquesTableBody');
+            tableBody.innerHTML = '';
+
+            data.forEach(estanque => {
+                const row = document.createElement('tr');
+
+                row.innerHTML = `
+                    <td>${estanque.id_estanque}</td>
+                    <td>${estanque.pez_id}</td>
+                    <td>${estanque.ubicacion}</td>
+                    <td>${estanque.capacidad}</td>
+                    <td>${estanque.alimentacion_id}</td>
+                    <td>${estanque.empleado_id}</td>
+                    <td>${estanque.cantidad}</td>
+                    <td>${estanque.fecha_cosecha}</td>
+                `;
+
+                tableBody.appendChild(row);
+            });
+        });
+    </script>
+</body>
+</html>
+

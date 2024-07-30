@@ -1,0 +1,15 @@
+version: '3'
+services:
+  web:
+    image: node:14
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./miweb:/var/www/html
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: contrasena
+      POSTGRES_DB: ProyectoG6
+

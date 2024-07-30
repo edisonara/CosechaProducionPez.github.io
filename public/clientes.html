@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD de Clientes - BeastComplay</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/bootstrap-grid.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="loader-container" id="loader">
+        <div class="loader"></div>
+    </div>
+    <div class="content" id="content">
+        <nav class="navbar navbar-expand-lg navbar-light bg-success fixed-top">
+            <a class="navbar-brand" href="index.html">BeastComplay</a>
+            <button class="navbar-toggler hidden-lg-up" type="button" data-toggle="collapse" data-target="#collapsibleNavId" aria-controls="collapsibleNavId"
+                aria-expanded="false" aria-label="Toggle navigation"></button>
+            <div class="collapse navbar-collapse" id="collapsibleNavId">
+                <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="nosotros.html">Sobre nosotros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="alimentacion.html">CRUD de Alimentación</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="asignacion.html">CRUD de Asignación</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="clientes.html">CRUD de Clientes <span class="sr-only">(current)</span></a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div class="container mt-5">
+            <h2>CRUD de Clientes</h2>
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <form id="clienteForm">
+                        <div class="form-group">
+                            <label for="nombreCliente">Nombre:</label>
+                            <input type="text" class="form-control" id="nombreCliente" placeholder="Ingrese el nombre" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="direccionCliente">Dirección:</label>
+                            <input type="text" class="form-control" id="direccionCliente" placeholder="Ingrese la dirección" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="emailCliente">Email:</label>
+                            <input type="email" class="form-control" id="emailCliente" placeholder="Ingrese el email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="telefonoCliente">Teléfono:</label>
+                            <input type="tel" class="form-control" id="telefonoCliente" placeholder="Ingrese el teléfono" pattern="[0-9]{10}" required>
+                            <small class="form-text text-muted">Formato: 1234567890</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Agregar</button>
+                    </form>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <h3>Listado de Clientes</h3>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Dirección</th>
+                                <th>Email</th>
+                                <th>Teléfono</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clientesTableBody">
+                            <!-- Aquí se cargarán los datos dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <footer class="bg-dark text-light mt-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Información de Contacto</h5>
+                        <p>Dirección: Universidad de las Fuerzas Armadas ESPE</p>
+                        <p>Email: jaguevara11@espe.edu.ec</p>
+                        <p>Teléfono: +123 456 7890</p>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <p>© 2024 BeastComplay. Todos los derechos reservados.</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modal para editar cliente -->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Editar Cliente</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="editForm">
+                    <div class="modal-body">
+                        <input type="hidden" id="editId">
+                        <div class="form-group">
+                            <label for="editNombre">Nombre:</label>
+                            <input type="text" class="form-control" id="editNombre" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editDireccion">Dirección:</label>
+                            <input type="text" class="form-control" id="editDireccion" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editEmail">Email:</label>
+                            <input type="email" class="form-control" id="editEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editTelefono">Teléfono:</label>
+                            <input type="tel" class="form-control" id="editTelefono" pattern="[0-9]{10}" required>
+                            <small class="form-text text-muted">Formato: 1234567890</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="js/clientes.js"></script>
+</body>
+</html>

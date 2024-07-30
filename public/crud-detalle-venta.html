@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalle Venta CRUD</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container mt-5">
+    <nav class="navbar navbar-expand-lg navbar-light bg-success fixed-top">
+        <a class="navbar-brand" href="/public/index.html">BeastComplay</a>
+        <button class="navbar-toggler hidden-lg-up" type="button" data-toggle="collapse" data-target="#collapsibleNavId" aria-controls="collapsibleNavId"
+            aria-expanded="false" aria-label="Toggle navigation"></button>
+        <div class="collapse navbar-collapse" id="collapsibleNavId">
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="nosotros.html">Sobre nosotros</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="alimentacion.html">CRUD de Alimentación</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="asignacion.html">CRUD de Asignación</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">CRUD de Clientes</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <hr><hr><hr>
+    <h2>Detalle de Venta</h2>
+    <form id="detalleVentaForm">
+      <input type="hidden" id="id_detalle_venta" name="id_detalle_venta">
+      <div class="form-group">
+        <label for="cliente_id">Cliente ID</label>
+        <input type="number" class="form-control" id="cliente_id" name="cliente_id" required>
+      </div>
+      <div class="form-group">
+        <label for="estanque_id">Estanque ID</label>
+        <input type="number" class="form-control" id="estanque_id" name="estanque_id" required>
+      </div>
+      <div class="form-group">
+        <label for="fecha_pedido">Fecha Pedido</label>
+        <input type="date" class="form-control" id="fecha_pedido" name="fecha_pedido" required>
+      </div>
+      <div class="form-group">
+        <label for="fecha_entrega">Fecha Entrega</label>
+        <input type="date" class="form-control" id="fecha_entrega" name="fecha_entrega" required>
+      </div>
+      <div class="form-group">
+        <label for="Cantidad">Cantidad</label>
+        <input type="number" class="form-control" id="Cantidad" name="Cantidad" required>
+      </div>
+      <div class="form-group">
+        <label for="Precio">Precio</label>
+        <input type="number" step="0.01" class="form-control" id="Precio" name="Precio" required>
+      </div>
+      <button type="button" class="btn btn-primary" id="createBtn">Ingresar</button>
+      <button type="button" class="btn btn-success" id="updateBtn">Actualizar</button>
+      <button type="button" class="btn btn-danger" id="deleteBtn">Borrar</button>
+      <button type="button" class="btn btn-info" id="listBtn">Mostrar Listado</button>
+    </form>
+    <h3 class="mt-5">Listado de las ventas a realizar</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Cliente ID</th>
+          <th>Estanque ID</th>
+          <th>Fecha Pedido</th>
+          <th>Fecha Entrega</th>
+          <th>Cantidad</th>
+          <th>Precio</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="detalleVentaList">
+        <!-- Los registros se agregarán aquí -->
+      </tbody>
+    </table>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      function fetchRecords() {
+        $.ajax({
+          url: '/detalle_venta',
+          method: 'GET',
+          success: function(data) {
+            let tableRows = '';
+            data.forEach(row => {
+              tableRows += `
+                <tr>
+                  <td>${row.id_detalle_venta}</td>
+                  <td>${row.cliente_id}</td>
+                  <td>${row.estanque_id}</td>
+                  <td>${row.fecha_pedido}</td>
+                  <td>${row.fecha_entrega}</td>
+                  <td>${row.Cantidad}</td>
+                  <td>${row.Precio}</td>
+                  <td>
+                    <button class="btn btn-info editBtn" data-id="${row.id_detalle_venta}">Edit</button>
+                  </td>
+                </tr>
+              `;
+            });
+            $('#detalleVentaList').html(tableRows);
+          }
+        });
+      }
+
+      $('#listBtn').click(function() {
+        fetchRecords();
+      });
+
+      $('#createBtn').click(function() {
+        const data = {
+          cliente_id: $('#cliente_id').val(),
+          estanque_id: $('#estanque_id').val(),
+          fecha_pedido: $('#fecha_pedido').val(),
+          fecha_entrega: $('#fecha_entrega').val(),
+          Cantidad: $('#Cantidad').val(),
+          Precio: $('#Precio').val()
+        };
+        $.ajax({
+          url: '/detalle_venta',
+          method: 'POST',
+          data: JSON.stringify(data),
+          contentType: 'application/json',
+          success: function() {
+            fetchRecords();
+            $('#detalleVentaForm')[0].reset();
+          },
+          error: function(xhr, textStatus, errorThrown) {
+            console.error('Error al agregar detalle de venta:', errorThrown);
+            alert('Hubo un error al agregar el detalle de venta. Por favor, verifica los datos e intenta nuevamente.');
+          }
+        });
+      });
+
+      $('#detalleVentaList').on('click', '.editBtn', function() {
+        const id = $(this).data('id');
+        $.ajax({
+          url: `/detalle_venta/${id}`,
+          method: 'GET',
+          success: function(data) {
+            $('#id_detalle_venta').val(data.id_detalle_venta);
+            $('#cliente_id').val(data.cliente_id);
+            $('#estanque_id').val(data.estanque_id);
+            $('#fecha_pedido').val(data.fecha_pedido);
+            $('#fecha_entrega').val(data.fecha_entrega);
+            $('#Cantidad').val(data.Cantidad);
+            $('#Precio').val(data.Precio);
+          }
+        });
+      });
+
+      $('#updateBtn').click(function() {
+        const id = $('#id_detalle_venta').val();
+        const data = {
+          cliente_id: $('#cliente_id').val(),
+          estanque_id: $('#estanque_id').val(),
+          fecha_pedido: $('#fecha_pedido').val(),
+          fecha_entrega: $('#fecha_entrega').val(),
+          Cantidad: $('#Cantidad').val(),
+          Precio: $('#Precio').val()
+        };
+        $.ajax({
+          url: `/detalle_venta/${id}`,
+          method: 'PUT',
+          data: JSON.stringify(data),
+          contentType: 'application/json',
+          success: function() {
+            fetchRecords();
+            $('#detalleVentaForm')[0].reset();
+          }
+        });
+      });
+
+      $('#deleteBtn').click(function() {
+        const id = $('#id_detalle_venta').val();
+        $.ajax({
+          url: `/detalle_venta/${id}`,
+          method: 'DELETE',
+          success: function() {
+            fetchRecords();
+            $('#detalleVentaForm')[0].reset();
+          }
+        });
+      });
+
+      // Fetch records initially when the page loads
+      fetchRecords();
+    });
+  </script>
+</body>
+</html>
+

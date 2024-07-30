@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD de Alimentación - BeastComplay</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/bootstrap-grid.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="loader-container" id="loader">
+        <div class="loader"></div>
+    </div>
+    <div class="content" id="content">
+        <nav class="navbar navbar-expand-lg navbar-light bg-success fixed-top">
+            <a class="navbar-brand" href="index.html">BeastComplay</a>
+            <button class="navbar-toggler hidden-lg-up" type="button" data-toggle="collapse" data-target="#collapsibleNavId" aria-controls="collapsibleNavId"
+                aria-expanded="false" aria-label="Toggle navigation"></button>
+            <div class="collapse navbar-collapse" id="collapsibleNavId">
+                <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="nosotros.html">Sobre nosotros</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="alimentacion.html">CRUD de Alimentación <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="asignacion.html">CRUD de Asignación</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">CRUD de Clientes</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <hr><hr><hr>
+        <div class="container mt-5">
+            <h2>CRUD de Alimentación</h2>
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <form id="alimentacionForm">
+                        <div class="form-group">
+                            <label for="tipoAlimento">Tipo de Alimento:</label>
+                            <input type="text" class="form-control" id="tipoAlimento" placeholder="Ingrese el tipo de alimento" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Agregar</button>
+                    </form>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <h3>Listado de Alimentos</h3>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tipo de Alimento</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="alimentosTableBody">
+                            <!-- Aquí se cargarán los datos dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <footer class="bg-dark text-light mt-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Información de Contacto</h5>
+                        <p>Dirección: Universidad de las Fuerzas Armadas ESPE</p>
+                        <p>Email: jaguevara11@espe.edu.ec</p>
+                        <p>Teléfono: +123 456 7890</p>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <p>© 2024 BeastComplay. Todos los derechos reservados.</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="js/alimentacion.js"></script>
+</body>
+</html>
