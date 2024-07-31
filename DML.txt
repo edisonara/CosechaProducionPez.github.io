@@ -1,0 +1,62 @@
+-- Insertar datos en el esquema Cosecha
+SET search_path TO Cosecha;
+
+-- Insertar datos en Peces
+INSERT INTO Peces (nombre, informacion) VALUES 
+('Tilapia', 'Pez de agua dulce común en piscicultura.'),
+('Trucha', 'Pez de agua fría, popular en la pesca deportiva.');
+
+-- Insertar datos en Estanques_Detalle
+INSERT INTO Estanques_Detalle (pez_id, ubicacion, capacidad) VALUES 
+(1, 'Estanque 1', 1000.0),
+(2, 'Estanque 2', 1500.0);
+
+-- Insertar datos en Estanques_Operaciones
+INSERT INTO Estanques_Operaciones (id_estanque, alimentacion_id, empleado_id, cantidad, fecha_cosecha) VALUES 
+(1, 1, 1, 200, '2024-05-01'),
+(2, 2, 2, 300, '2024-06-01');
+
+-- Insertar datos en Alimentacion
+INSERT INTO Alimentacion (tipo_alimento) VALUES 
+('Alimento para Tilapia'),
+('Alimento para Trucha');
+
+-- Insertar datos en Trabajador
+INSERT INTO Trabajador (nombre, apellido, email, direccion, telefono) VALUES 
+('Juan', 'Perez', 'juan.perez@example.com', 'Calle Falsa 123', '555-1234'),
+('Maria', 'Lopez', 'maria.lopez@example.com', 'Avenida Siempre Viva 456', '555-5678');
+
+-- Insertar datos en Trabajo
+INSERT INTO Trabajo (nombre, descripcion) VALUES 
+('Alimentacion', 'Responsable de alimentar a los peces.'),
+('Mantenimiento', 'Encargado del mantenimiento de estanques.');
+
+-- Insertar datos en Asignacion
+INSERT INTO Asignacion (trabajador_id, trabajo_id, fecha_asignacion) VALUES 
+(1, 1, '2024-01-15'),
+(2, 2, '2024-02-20');
+
+-- Insertar datos en Control_Salud
+INSERT INTO Control_Salud (estanque_id, fecha_control, resultado, Estabilidad) VALUES 
+(1, '2024-01-05', 'Saludable', 85),
+(1, '2024-01-20', 'Problemas menores', 70),
+(2, '2024-02-10', 'Saludable', 90),
+(2, '2024-02-25', 'Saludable', 95);
+
+-- Insertar datos en el esquema Comercializacion
+SET search_path TO Comercializacion;
+
+-- Insertar datos en Cliente
+INSERT INTO Cliente (nombre, direccion, email, telefono) VALUES 
+('Empresa ABC', 'Industria 789', 'contacto@empresaabc.com', '555-9876'),
+('Mercado XYZ', 'Comercial 321', 'ventas@mercadoxyz.com', '555-6543');
+
+-- Insertar datos en Detalle_venta
+INSERT INTO Detalle_venta (cliente_id, estanque_id, fecha_pedido, fecha_entrega, cantidad, precio) VALUES 
+(1, 1, '2024-01-10', '2024-01-15', 100, 200.0),
+(2, 2, '2024-02-15', '2024-02-20', 150, 300.0);
+
+-- Insertar datos en Factura
+INSERT INTO Factura (pedidos_id, encargado_id, fecha_factura) VALUES 
+(1, 1, '2024-01-16'),
+(2, 2, '2024-02-21');

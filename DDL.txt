@@ -26,15 +26,21 @@ CREATE TABLE Control_Salud_2024_01 PARTITION OF Control_Salud
 CREATE TABLE Control_Salud_2024_02 PARTITION OF Control_Salud
     FOR VALUES FROM ('2024-02-01') TO ('2024-03-01');
 
-CREATE TABLE Estanques (
+-- Particionamiento vertical de la tabla Estanques
+CREATE TABLE Estanques_Detalle (
     id_estanque SERIAL PRIMARY KEY,
     pez_id INT,
     ubicacion VARCHAR NOT NULL,
-    capacidad FLOAT NOT NULL,
+    capacidad FLOAT NOT NULL
+);
+
+CREATE TABLE Estanques_Operaciones (
+    id_estanque INT PRIMARY KEY,
     alimentacion_id INT,
     empleado_id INT,
     cantidad INT,
-    fecha_cosecha DATE
+    fecha_cosecha DATE,
+    FOREIGN KEY (id_estanque) REFERENCES Estanques_Detalle(id_estanque)
 );
 
 CREATE TABLE Alimentacion (
@@ -67,14 +73,16 @@ CREATE TABLE Asignacion (
 -- Agregar claves foráneas para el esquema de cosecha
 ALTER TABLE Control_Salud
 ADD CONSTRAINT fk_control_salud_estanque
-FOREIGN KEY (estanque_id) REFERENCES Estanques(id_estanque);
+FOREIGN KEY (estanque_id) REFERENCES Estanques_Detalle(id_estanque);
 
-ALTER TABLE Estanques
+ALTER TABLE Estanques_Detalle
 ADD CONSTRAINT fk_estanques_pez
-FOREIGN KEY (pez_id) REFERENCES Peces(id_pez),
-ADD CONSTRAINT fk_estanques_alimentacion
+FOREIGN KEY (pez_id) REFERENCES Peces(id_pez);
+
+ALTER TABLE Estanques_Operaciones
+ADD CONSTRAINT fk_estanques_operaciones_alimentacion
 FOREIGN KEY (alimentacion_id) REFERENCES Alimentacion(id_alimentacion),
-ADD CONSTRAINT fk_estanques_trabajador
+ADD CONSTRAINT fk_estanques_operaciones_trabajador
 FOREIGN KEY (empleado_id) REFERENCES Asignacion(id_asignacion);
 
 ALTER TABLE Asignacion
@@ -116,7 +124,7 @@ ALTER TABLE Detalle_venta
 ADD CONSTRAINT fk_detalle_venta_cliente
 FOREIGN KEY (cliente_id) REFERENCES Cliente(id_cliente),
 ADD CONSTRAINT fk_detalle_venta_estanque
-FOREIGN KEY (estanque_id) REFERENCES Cosecha.Estanques(id_estanque);
+FOREIGN KEY (estanque_id) REFERENCES Cosecha.Estanques_Detalle(id_estanque);
 
 ALTER TABLE Factura
 ADD CONSTRAINT fk_factura_pedidos
