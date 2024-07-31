@@ -134,8 +134,8 @@ CREATE ROLE admin_comercializacion;
 CREATE ROLE rol_general;
 
 -- Asignar permisos a los roles
-GRANT USAGE ON SCHEMA Cosecha TO admin_cosecha, admin_comercializacion, rol_general;
-GRANT USAGE ON SCHEMA Comercializacion TO admin_cosecha, admin_comercializacion, rol_general;
+GRANT USAGE ON SCHEMA Cosecha TO admin_cosecha, rol_general;
+GRANT USAGE ON SCHEMA Comercializacion TO admin_comercializacion, rol_general;
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA Cosecha TO admin_cosecha;
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA Comercializacion TO admin_comercializacion;
