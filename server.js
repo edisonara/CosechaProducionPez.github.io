@@ -37,7 +37,7 @@ app.post('/login', (req, res) => {
                     res.send('Error fetching user roles');
                 } else {
                     const roles = result.rows.map(row => row.rolname);
-                    
+
                     if (roles.includes('admin_cosecha')) {
                         res.redirect('/admin-cosecha');
                     } else if (roles.includes('admin_comercializacion')) {
@@ -53,15 +53,15 @@ app.post('/login', (req, res) => {
 });
 
 app.get('/admin-cosecha', (req, res) => {
-    res.send('Welcome to the Admin Cosecha page!');
+    res.sendFile(path.join(__dirname, 'public', 'admin-cosecha.html'));
 });
 
 app.get('/admin-comercializacion', (req, res) => {
-    res.send('Welcome to the Admin Comercializacion page!');
+    res.sendFile(path.join(__dirname, 'public', 'admin-comercializacion.html'));
 });
 
 app.get('/general', (req, res) => {
-    res.send('Welcome to the General page!');
+    res.sendFile(path.join(__dirname, 'public', 'general.html'));
 });
 
 app.listen(port, () => {
