@@ -64,6 +64,63 @@ app.get('/general', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'general.html'));
 });
 
+// Rutas para operaciones específicas
+app.post('/admin-cosecha/add-fish', (req, res) => {
+    const { fishName, fishInfo } = req.body;
+    const client = new Client({
+        host: '4.203.136.126',
+        port: 5432,
+        user: 'user_admin_cosecha',
+        password: '123',
+        database: 'ProyectoG6'
+    });
+
+    client.connect(err => {
+        if (err) {
+            console.error('Connection error', err.stack);
+            res.send('Database connection error');
+        } else {
+            client.query('INSERT INTO Cosecha.Peces (nombre, informacion) VALUES ($1, $2)', [fishName, fishInfo], (err, result) => {
+                if (err) {
+                    console.error('Query error', err.stack);
+                    res.send('Error adding fish');
+                } else {
+                    res.send('Fish added successfully');
+                }
+                client.end();
+            });
+        }
+    });
+});
+
+app.post('/admin-comercializacion/add-client', (req, res) => {
+    const { clientName, clientAddress, clientEmail, clientPhone } = req.body;
+    const client = new Client({
+        host: '4.203.136.126',
+        port: 5432,
+        user: 'user_admin_comercializacion',
+        password: '123',
+        database: 'ProyectoG6'
+    });
+
+    client.connect(err => {
+        if (err) {
+            console.error('Connection error', err.stack);
+            res.send('Database connection error');
+        } else {
+            client.query('INSERT INTO Comercializacion.Cliente (nombre, direccion, email, telefono) VALUES ($1, $2, $3, $4)', [clientName, clientAddress, clientEmail, clientPhone], (err, result) => {
+                if (err) {
+                    console.error('Query error', err.stack);
+                    res.send('Error adding client');
+                } else {
+                    res.send('Client added successfully');
+                }
+                client.end();
+            });
+        }
+    });
+});
+
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });

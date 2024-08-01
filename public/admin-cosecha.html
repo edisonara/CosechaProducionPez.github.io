@@ -29,7 +29,15 @@
     </section>
 
     <div class="container">
-        <!-- Content here -->
+        <!-- Formulario para agregar un pez -->
+        <h2>Add Fish</h2>
+        <form action="/admin-cosecha/add-fish" method="post">
+            <label for="fishName">Fish Name:</label>
+            <input type="text" id="fishName" name="fishName" required>
+            <label for="fishInfo">Fish Info:</label>
+            <input type="text" id="fishInfo" name="fishInfo" required>
+            <button type="submit">Add Fish</button>
+        </form>
     </div>
 </body>
 </html>
