@@ -8,11 +8,11 @@ const port = 3000;
 
 // Configuración de PostgreSQL
 const client = new Client({
-    host: '172.17.0.2', // O '127.0.0.1' o la dirección IP de tu contenedor Docker si es diferente
+    host: '4.203.136.126', //  aqui nos conetamos al contenedor de azure
     port: 5432,
     user: 'postgres',
-    password: 'contrasena',
-    database: 'ProyectoG6'
+    password: 'Edison23.',
+    database: 'ProyectoG6' /// es tomar en cuenta. 
 });
 
 client.connect().then(() => {
