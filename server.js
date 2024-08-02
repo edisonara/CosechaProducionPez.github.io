@@ -82,7 +82,33 @@ const createDbClient = (user, password) => {
         database: 'ProyectoG6'
     });
 };
+// Ruta para ejecutar una consulta SQL personalizada
+app.post('/general/query', async (req, res) => {
+    const { query } = req.body;
 
+    if (!query) {
+        return res.status(400).send('Query parameter is required');
+    }
+
+    const client = new Client({
+        host: '4.203.136.126',
+        port: 5432,
+        user: 'user_rol_general',
+        password: '123',
+        database: 'ProyectoG6'
+    });
+
+    try {
+        await client.connect();
+        const result = await client.query(query);
+        res.json(result.rows);
+    } catch (err) {
+        console.error('Query error', err.stack);
+        res.status(500).send('Error executing query');
+    } finally {
+        await client.end();
+    }
+});
 // Rutas para operaciones específicas de admin-cosecha
 app.post('/admin-cosecha/add-fish', (req, res) => {
     const { fishName, fishInfo } = req.body;
