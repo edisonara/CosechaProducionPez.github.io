@@ -1,14 +1,14 @@
 $(document).ready(function() {
+    // Cargar datos iniciales
+    loadClientData();
+    loadDetailData();
+    loadFacturaData();
+    loadStatistics();
 
-       // Load data and initialize charts
-       loadClientData();
-       loadDetailData();
-       loadFacturaData();
-       loadStatistics();
-
+    // Manejar el inicio de sesión
     $('#login-form').on('submit', function(event) {
         event.preventDefault();
-        
+
         $.ajax({
             url: '/login',
             type: 'post',
@@ -26,7 +26,7 @@ $(document).ready(function() {
     });
 });
 
-// Función para cargar datos de los clientes
+// Cargar datos de clientes
 function loadClientData() {
     $.ajax({
         url: '/api/clientes',
@@ -36,6 +36,7 @@ function loadClientData() {
             data.forEach(cliente => {
                 $('#clientTable').append(`
                     <tr>
+                        <td>${cliente.id_cliente}</td>
                         <td>${cliente.nombre}</td>
                         <td>${cliente.direccion}</td>
                         <td>${cliente.email}</td>
@@ -48,31 +49,86 @@ function loadClientData() {
                 `);
             });
 
-            $('.edit-client').click(editClient);
+            $('.edit-client').click(function() {
+                showEditClientForm($(this).data('id'));
+            });
             $('.delete-client').click(deleteClient);
         }
     });
 }
 
-// Función para editar un cliente (implementación requerida)
-function editClient() {
-    const id = $(this).data('id');
-    // Aquí puedes abrir un modal o una nueva página para editar los detalles del cliente
+// Mostrar el formulario para añadir un cliente
+function showAddClientForm() {
+    $('#clientForm').data('id', null).show(); // No tiene ID asignado para nueva adición
+    $('#formTitle').text('Añadir Cliente');
+    $('#saveClientBtn').off('click').on('click', addClient); // Configura el botón para añadir
+    $('#overlay').show();
 }
 
-// Función para eliminar un cliente
-function deleteClient() {
-    const id = $(this).data('id');
+// Enviar los datos del nuevo cliente al servidor
+function addClient() {
+    const clientData = {
+        nombre: $('#clientName').val(),
+        direccion: $('#clientAddress').val(),
+        email: $('#clientEmail').val(),
+        telefono: $('#clientPhone').val()
+    };
+
     $.ajax({
-        url: `/api/clientes/${id}`,
-        method: 'DELETE',
+        url: '/api/clientes',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(clientData),
         success: function() {
             loadClientData();
+            $('#clientForm').hide(); // Ocultar el formulario después de añadir
+            $('#overlay').hide();
         }
     });
 }
 
-// Función para cargar datos de detalle de ventas
+// Mostrar el formulario con datos del cliente a editar
+function showEditClientForm(id) {
+    $.ajax({
+        url: `/api/clientes/${id}`,
+        method: 'GET',
+        success: function(cliente) {
+            $('#clientName').val(cliente.nombre);
+            $('#clientAddress').val(cliente.direccion);
+            $('#clientEmail').val(cliente.email);
+            $('#clientPhone').val(cliente.telefono);
+            $('#clientForm').data('id', id).show(); // Guardar el ID para actualizar
+            $('#formTitle').text('Editar Cliente');
+            $('#saveClientBtn').off('click').on('click', updateClient); // Configura el botón para actualizar
+            $('#overlay').show();
+        }
+    });
+}
+
+// Enviar los datos modificados del cliente al servidor
+function updateClient() {
+    const id = $('#clientForm').data('id');
+    const clientData = {
+        nombre: $('#clientName').val(),
+        direccion: $('#clientAddress').val(),
+        email: $('#clientEmail').val(),
+        telefono: $('#clientPhone').val()
+    };
+
+    $.ajax({
+        url: `/api/clientes/${id}`,
+        method: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify(clientData),
+        success: function() {
+            loadClientData();
+            $('#clientForm').hide(); // Ocultar el formulario después de actualizar
+            $('#overlay').hide();
+        }
+    });
+}
+
+// Cargar datos de detalles de venta
 function loadDetailData() {
     $.ajax({
         url: '/api/detalle-venta',
@@ -97,19 +153,104 @@ function loadDetailData() {
                 `);
             });
 
-            $('.edit-detail').click(editDetail);
+            $('.edit-detail').click(function() {
+                showEditDetailForm($(this).data('id'));
+            });
             $('.delete-detail').click(deleteDetail);
         }
     });
 }
 
-// Función para editar un detalle de venta (implementación requerida)
-function editDetail() {
-    const id = $(this).data('id');
-    // Aquí puedes abrir un modal o una nueva página para editar los detalles del detalle de venta
+// Mostrar el formulario para añadir un detalle de venta
+function showAddDetailForm() {
+    $('#detailForm').data('id', null).show(); // No tiene ID asignado para nueva adición
+    $('#formTitle').text('Añadir Detalle de Venta');
+    $('#saveDetailBtn').off('click').on('click', addDetail); // Configura el botón para añadir
+    $('#overlay').show();
 }
 
-// Función para eliminar un detalle de venta
+// Enviar los datos del nuevo detalle de venta al servidor
+function addDetail() {
+    const detailData = {
+        cliente_id: $('#clientId').val(),
+        estanque_id: $('#estanqueId').val(),
+        fecha_pedido: $('#orderDate').val(),
+        fecha_entrega: $('#deliveryDate').val(),
+        cantidad: $('#quantity').val(),
+        precio: $('#price').val()
+    };
+
+    $.ajax({
+        url: '/api/detalle-venta',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(detailData),
+        success: function() {
+            loadDetailData();
+            $('#detailForm').hide(); // Ocultar el formulario después de añadir
+            $('#overlay').hide();
+        }
+    });
+}
+
+// Mostrar el formulario con datos del detalle de venta a editar
+function showEditDetailForm(id) {
+    $.ajax({
+        url: `/api/detalle-venta/${id}`,
+        method: 'GET',
+        success: function(detalle) {
+            $('#clientId').val(detalle.cliente_id);
+            $('#estanqueId').val(detalle.estanque_id);
+            $('#orderDate').val(detalle.fecha_pedido);
+            $('#deliveryDate').val(detalle.fecha_entrega);
+            $('#quantity').val(detalle.cantidad);
+            $('#price').val(detalle.precio);
+            $('#detailForm').data('id', id).show(); // Guardar el ID para actualizar
+            $('#formTitle').text('Editar Detalle de Venta');
+            $('#saveDetailBtn').off('click').on('click', updateDetail); // Configura el botón para actualizar
+            $('#overlay').show();
+        }
+    });
+}
+
+// Enviar los datos modificados del detalle de venta al servidor
+function updateDetail() {
+    const id = $('#detailForm').data('id');
+    const detailData = {
+        cliente_id: $('#clientId').val(),
+        estanque_id: $('#estanqueId').val(),
+        fecha_pedido: $('#orderDate').val(),
+        fecha_entrega: $('#deliveryDate').val(),
+        cantidad: $('#quantity').val(),
+        precio: $('#price').val()
+    };
+
+    $.ajax({
+        url: `/api/detalle-venta/${id}`,
+        method: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify(detailData),
+        success: function() {
+            loadDetailData();
+            $('#detailForm').hide(); // Ocultar el formulario después de actualizar
+            $('#overlay').hide();
+        }
+    });
+}
+
+// Eliminar un cliente
+function deleteClient() {
+    const id = $(this).data('id');
+    $.ajax({
+        url: `/api/clientes/${id}`,
+        method: 'DELETE',
+        success: function() {
+            loadClientData();
+        }
+    });
+}
+
+// Eliminar un detalle de venta
 function deleteDetail() {
     const id = $(this).data('id');
     $.ajax({
@@ -120,6 +261,21 @@ function deleteDetail() {
         }
     });
 }
+
+// Eventos para añadir cliente y detalle de venta
+$('#addClientBtn').click(showAddClientForm);
+$('#addDetailBtn').click(showAddDetailForm);
+
+// Ocultar el formulario al hacer clic en cancelar
+$('#cancelClientBtn').click(function() {
+    $('#clientForm').hide();
+    $('#overlay').hide();
+});
+
+$('#cancelDetailBtn').click(function() {
+    $('#detailForm').hide();
+    $('#overlay').hide();
+});
 
 // Función para cargar datos de facturas
 function loadFacturaData() {
@@ -178,9 +334,3 @@ function loadStatistics() {
         data: chartData2
     });
 }
-
-// Cargar datos de clientes cuando el documento esté listo
-$(document).ready(function() {
-    loadClientData();
-    // Puedes agregar otras funciones de carga de datos aquí
-});
