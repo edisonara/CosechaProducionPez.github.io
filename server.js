@@ -64,7 +64,7 @@ app.get('/general', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'general.html'));
 });
 
-// Rutas para operaciones específicas
+// Rutas para operaciones específicas de admin-cosecha
 app.post('/admin-cosecha/add-fish', (req, res) => {
     const { fishName, fishInfo } = req.body;
     const client = new Client({
@@ -93,6 +93,7 @@ app.post('/admin-cosecha/add-fish', (req, res) => {
     });
 });
 
+// Rutas para operaciones específicas de admin-comercializacion
 app.post('/admin-comercializacion/add-client', (req, res) => {
     const { clientName, clientAddress, clientEmail, clientPhone } = req.body;
     const client = new Client({
@@ -114,6 +115,61 @@ app.post('/admin-comercializacion/add-client', (req, res) => {
                     res.send('Error adding client');
                 } else {
                     res.send('Client added successfully');
+                }
+                client.end();
+            });
+        }
+    });
+});
+
+// Rutas para operaciones de lectura del usuario general
+app.get('/general/fish', (req, res) => {
+    const client = new Client({
+        host: '4.203.136.126',
+        port: 5432,
+        user: 'user_rol_general',
+        password: '123',
+        database: 'ProyectoG6'
+    });
+
+    client.connect(err => {
+        if (err) {
+            console.error('Connection error', err.stack);
+            res.send('Database connection error');
+        } else {
+            client.query('SELECT * FROM Cosecha.Peces', (err, result) => {
+                if (err) {
+                    console.error('Query error', err.stack);
+                    res.send('Error fetching fish data');
+                } else {
+                    res.json(result.rows);
+                }
+                client.end();
+            });
+        }
+    });
+});
+
+app.get('/general/clients', (req, res) => {
+    const client = new Client({
+        host: '4.203.136.126',
+        port: 5432,
+        user: 'user_rol_general',
+        password: '123',
+        database: 'ProyectoG6'
+    });
+
+    client.connect(err => {
+        if (err) {
+            console.error('Connection error', err.stack);
+            res.send('Database connection error');
+        } else {
+            client.query('SELECT * FROM Comercializacion.Cliente', (err, result) => {
+                if (err) {
+                    console.error('Query error', err.stack);
+                    res.send('Error fetching client data');
+                } else {
+                    res.json(result.rows);
                 }
                 client.end();
             });
