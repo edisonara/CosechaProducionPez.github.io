@@ -141,14 +141,6 @@ CREATE ROLE admin_cosecha;
 CREATE ROLE admin_comercializacion;
 CREATE ROLE rol_general;
 
--- Asignar permisos a los roles
-GRANT USAGE ON SCHEMA Cosecha TO admin_cosecha, rol_general;
-GRANT USAGE ON SCHEMA Comercializacion TO admin_comercializacion, rol_general;
-
-GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA Cosecha TO admin_cosecha;
-GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA Comercializacion TO admin_comercializacion;
-GRANT SELECT ON ALL TABLES IN SCHEMA Cosecha, Comercializacion TO rol_general;
-
 -- Crear vistas
 CREATE VIEW Cosecha.vista_peces AS
 SELECT id_pez, nombre FROM Cosecha.Peces;
@@ -157,6 +149,4 @@ CREATE VIEW Comercializacion.vista_detalle_ventas AS
 SELECT id_detalle_venta, cliente_id, estanque_id, fecha_pedido, cantidad, precio
 FROM Comercializacion.Detalle_venta;
 
--- Asignar permisos a las vistas
-GRANT SELECT ON Cosecha.vista_peces TO admin_cosecha, admin_comercializacion, rol_general;
-GRANT SELECT ON Comercializacion.vista_detalle_ventas TO admin_cosecha, admin_comercializacion, rol_general;
+
