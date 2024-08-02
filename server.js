@@ -74,7 +74,7 @@ app.post('/admin-cosecha/add-fish', (req, res) => {
         password: '123',
         database: 'ProyectoG6'
     });
-
+   
     client.connect(err => {
         if (err) {
             console.error('Connection error', err.stack);
@@ -91,6 +91,30 @@ app.post('/admin-cosecha/add-fish', (req, res) => {
             });
         }
     });
+
+    // Ruta para obtener los datos de Control_Salud
+app.get('/admin-cosecha/control-salud', async (req, res) => {
+    const client = new Client({
+        host: '4.203.136.126',
+        port: 5432,
+        user: 'user_admin_cosecha',
+        password: '123',
+        database: 'ProyectoG6'
+    });
+
+    try {
+        await client.connect();
+        const result = await client.query('SELECT * FROM Cosecha.Control_Salud');
+        res.json(result.rows);
+    } catch (error) {
+        console.error('Error fetching control salud data:', error);
+        res.status(500).send('Error fetching control salud data');
+    } finally {
+        client.end();
+    }
+});
+
+
     app.use(bodyParser.json());
     app.use(express.static('public'));
 

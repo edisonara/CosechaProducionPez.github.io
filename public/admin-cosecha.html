@@ -3,41 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/style.css">
     <title>Admin Cosecha</title>
-</head>
-<body class="admin-cosecha">
-    <header class="admin-cosecha">
-        <div class="container">
-            <div id="branding">
-                <h1>Admin Cosecha</h1>
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/logout">Logout</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body{
+            background-color: #fefcfc;
+        }
+        .jumbotron {
+            background-image: url('https://img.freepik.com/foto-gratis/hermoso-rojo-blanco-betta-splendens-pez-luchador-siames-o-plakat-popular-pez-tailandes-acuario-es-mascota-ornamental-humeda_1150-50671.jpg?t=st=1722578955~exp=1722582555~hmac=311d83eb68d59269a2a8816fb54dd251b7e04ecdc3e39a993f789b7a908f6119&w=1380');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
 
-    <section id="showcase" class="admin-cosecha">
+    .navbar {
+        background-color: #489159 !important;
+    }
+    
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <h1>Welcome to the Admin Cosecha Page</h1>
-            <p>Manage all your cosecha tasks here.</p>
+            <a class="navbar-brand" href="#">Admin Cosecha</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Logout</a>
+                    </li>
+                </ul>
+            </div>
         </div>
-    </section>
+    </nav>
+
+    <div class="jumbotron">
+        <div class="container">
+            <h1 class="display-4">Bienvenido a la Sección para los administradores de Cosecha</h1>
+            <p class="lead">Aqui podra consultar todo acerca de las cosechas en piscicultura</p>
+        </div>
+    </div>
 
     <div class="container">
-        <!-- Formulario para agregar un pez -->
-        <h2>Add Fish</h2>
-        <form action="/admin-cosecha/add-fish" method="post">
-            <label for="fishName">Fish Name:</label>
-            <input type="text" id="fishName" name="fishName" required>
-            <label for="fishInfo">Fish Info:</label>
-            <input type="text" id="fishInfo" name="fishInfo" required>
-            <button type="submit">Add Fish</button>
-        </form>
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title">Agregar pez</h2>
+                        <form action="/admin-cosecha/add-fish" method="post">
+                            <div class="form-group">
+                                <label for="fishName">Nombre del pez:</label>
+                                <input type="text" class="form-control" id="fishName" name="fishName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="fishInfo">Informacion del pez:</label>
+                                <input type="text" class="form-control" id="fishInfo" name="fishInfo" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Agregar pez</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title">Lista de Peces</h2>
+                        <div id="fishList">
+                            <!-- Aquí se mostrará la lista de peces mediante JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+       
     </div>
+
+    <!-- Bootstrap JS, Popper.js, and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <script>
+        // Función para cargar la lista de Control_Salud desde la base de datos
+        async function loadControlSaludList() {
+            try {
+                const response = await fetch('/admin-cosecha/control-salud');
+                const data = await response.json();
+                const controlSaludList = document.getElementById('controlSaludList');
+
+                controlSaludList.innerHTML = '<ul class="list-group">' + data.map(record => 
+                    `<li class="list-group-item">ID: ${record.id_control}, Estanque ID: ${record.estanque_id}, Fecha: ${record.fecha_control}, Resultado: ${record.resultado}, Estabilidad: ${record.estabilidad}</li>`
+                ).join('') + '</ul>';
+            } catch (error) {
+                console.error('Error fetching control salud list:', error);
+            }
+        }
+
+        // Función para cargar la lista de peces desde la base de datos
+        async function loadFishList() {
+            try {
+                const response = await fetch('/general/fish');
+                const data = await response.json();
+                const fishList = document.getElementById('fishList');
+
+                fishList.innerHTML = '<ul class="list-group">' + data.map(fish => `<li class="list-group-item">ID: ${fish.id_pez}, Name: ${fish.nombre}, Info: ${fish.informacion}</li>`).join('') + '</ul>';
+            } catch (error) {
+                console.error('Error fetching fish list:', error);
+            }
+        }
+
+        // Cargar las listas al cargar la página
+        window.onload = function() {
+            loadFishList();
+            loadControlSaludList();
+        };
+    </script>
 </body>
 </html>
