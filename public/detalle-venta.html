@@ -3,103 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalle de Venta</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <style>
-        #clientForm, #detailForm {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            width: 80%;
-            max-width: 500px;
-            display: none;
-        }
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-            display: none;
-        }
-    </style>
+    <title>Detalle de Ventas</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="admin-comercializacion.html">Admin Comercialización</a>
-    </nav>
+    <div class="container mt-4">
+        <h1>Detalle de Ventas</h1>
 
-    <div class="container">
-        <h2 class="mt-4">Detalle de Venta</h2>
-        <button class="btn btn-primary mb-3" id="addDetailBtn">Añadir Detalle de Venta</button>
-        <table class="table table-striped">
+        <!-- Formulario para agregar un nuevo detalle de venta -->
+        <form id="add-detail-form">
+            <div class="form-group">
+                <label for="clienteId">Cliente ID</label>
+                <input type="number" class="form-control" id="clienteId" required>
+            </div>
+            <div class="form-group">
+                <label for="estanqueId">Estanque ID</label>
+                <input type="number" class="form-control" id="estanqueId" required>
+            </div>
+            <div class="form-group">
+                <label for="fechaPedido">Fecha de Pedido</label>
+                <input type="date" class="form-control" id="fechaPedido" required>
+            </div>
+            <div class="form-group">
+                <label for="fechaEntrega">Fecha de Entrega</label>
+                <input type="date" class="form-control" id="fechaEntrega">
+            </div>
+            <div class="form-group">
+                <label for="cantidad">Cantidad</label>
+                <input type="number" class="form-control" id="cantidad" required>
+            </div>
+            <div class="form-group">
+                <label for="precio">Precio</label>
+                <input type="number" step="0.01" class="form-control" id="precio" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Agregar Detalle</button>
+        </form>
+
+        <!-- Tabla para mostrar detalles de ventas -->
+        <h2 class="mt-4">Detalles de Ventas</h2>
+        <table class="table">
             <thead>
                 <tr>
                     <th>ID</th>
                     <th>Cliente ID</th>
                     <th>Estanque ID</th>
-                    <th>Fecha Pedido</th>
-                    <th>Fecha Entrega</th>
+                    <th>Fecha de Pedido</th>
+                    <th>Fecha de Entrega</th>
                     <th>Cantidad</th>
                     <th>Precio</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
-            <tbody id="detailTable">
-                <!-- Detalle de ventas serán cargados aquí -->
+            <tbody id="detail-table-body">
+                <!-- Los detalles de ventas se cargarán aquí -->
             </tbody>
         </table>
     </div>
 
-    <!-- Formulario para añadir/editar detalle de venta -->
-    <div id="detailForm">
-        <h3 id="formTitle">Añadir Detalle de Venta</h3>
-        <form>
-            <div class="form-group">
-                <label for="clientId">Cliente ID</label>
-                <input type="text" class="form-control" id="clientId" required>
-            </div>
-            <div class="form-group">
-                <label for="estanqueId">Estanque ID</label>
-                <input type="text" class="form-control" id="estanqueId">
-            </div>
-            <div class="form-group">
-                <label for="orderDate">Fecha Pedido</label>
-                <input type="date" class="form-control" id="orderDate">
-            </div>
-            <div class="form-group">
-                <label for="deliveryDate">Fecha Entrega</label>
-                <input type="date" class="form-control" id="deliveryDate">
-            </div>
-            <div class="form-group">
-                <label for="quantity">Cantidad</label>
-                <input type="number" class="form-control" id="quantity">
-            </div>
-            <div class="form-group">
-                <label for="price">Precio</label>
-                <input type="number" class="form-control" id="price" step="0.01">
-            </div>
-            <button type="button" class="btn btn-primary" id="saveDetailBtn">Guardar</button>
-            <button type="button" class="btn btn-secondary" id="cancelDetailBtn">Cancelar</button>
-        </form>
-    </div>
-
-    <div class="overlay" id="overlay"></div>
-
-    <footer class="footer">
-        <p>&copy; 2024 Admin Comercialización</p>
-    </footer>
-
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="js/scripts.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="js/detalle-venta.js"></script>
 </body>
 </html>
