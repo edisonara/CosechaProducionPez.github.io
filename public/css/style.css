@@ -95,6 +95,54 @@ header.admin-comercializacion {
     background: url('https://images.unsplash.com/photo-1485452499676-62ab02c20e83?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat 0 -100px;
 }
 
+
+/* style.css */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Arial', sans-serif;
+}
+
+.navbar {
+    margin-bottom: 20px;
+}
+
+.card {
+    margin: 20px 0;
+}
+
+.card-title {
+    font-size: 1.5em;
+}
+
+.table {
+    margin-top: 20px;
+}
+
+.chart-container {
+    position: relative;
+    margin: auto;
+    height: 80vh;
+    width: 80vw;
+}
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 50px;
+    background-color: #f8f9fa;
+    text-align: center;
+    line-height: 50px;
+    border-top: 1px solid #dee2e6;
+}
+
+
+
+
+
+
+
+
 /* Estilos específicos para General */
 body.general {
     background-color: rgb(38, 121, 85);
@@ -108,3 +156,5 @@ header.general {
 #showcase.general {
     background: url('../img/showcase3.jpg') no-repeat 0 -100px;
 }
+
+

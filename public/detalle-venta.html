@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clientes</title>
+    <title>Detalle de Venta</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -13,21 +13,23 @@
     </nav>
 
     <div class="container">
-        <h2 class="mt-4">Clientes</h2>
-        <button class="btn btn-primary mb-3" id="addClientBtn">Añadir Cliente</button>
+        <h2 class="mt-4">Detalle de Venta</h2>
+        <button class="btn btn-primary mb-3" id="addDetailBtn">Añadir Detalle de Venta</button>
         <table class="table table-striped">
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Dirección</th>
-                    <th>Email</th>
-                    <th>Teléfono</th>
+                    <th>Cliente ID</th>
+                    <th>Estanque ID</th>
+                    <th>Fecha Pedido</th>
+                    <th>Fecha Entrega</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
-            <tbody id="clientTable">
-                <!-- Clientes serán cargados aquí -->
+            <tbody id="detailTable">
+                <!-- Detalle de ventas serán cargados aquí -->
             </tbody>
         </table>
     </div>

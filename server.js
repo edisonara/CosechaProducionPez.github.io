@@ -91,6 +91,64 @@ app.post('/admin-cosecha/add-fish', (req, res) => {
             });
         }
     });
+    app.use(bodyParser.json());
+    app.use(express.static('public'));
+
+    // Endpoints para clientes
+    app.get('/api/clientes', (req, res) => {
+        client.query('SELECT * FROM Comercializacion.Cliente', (err, result) => {
+            if (err) {
+                res.status(500).send(err);
+            } else {
+                res.json(result.rows);
+            }
+        });
+    });
+
+    app.delete('/api/clientes/:id', (req, res) => {
+        const id = req.params.id;
+        client.query('DELETE FROM Comercializacion.Cliente WHERE id_cliente = $1', [id], (err, result) => {
+            if (err) {
+                res.status(500).send(err);
+            } else {
+                res.sendStatus(204);
+            }
+        });
+    });
+
+    // Endpoints para detalle-venta
+    app.get('/api/detalle-venta', (req, res) => {
+        client.query('SELECT * FROM Comercializacion.Detalle_venta', (err, result) => {
+            if (err) {
+                res.status(500).send(err);
+            } else {
+                res.json(result.rows);
+            }
+        });
+    });
+
+    app.delete('/api/detalle-venta/:id', (req, res) => {
+        const id = req.params.id;
+        client.query('DELETE FROM Comercializacion.Detalle_venta WHERE id_detalle_venta = $1', [id], (err, result) => {
+            if (err) {
+                res.status(500).send(err);
+            } else {
+                res.sendStatus(204);
+            }
+        });
+    });
+
+    // Endpoints para factura
+    app.get('/api/factura', (req, res) => {
+        client.query('SELECT * FROM Comercializacion.Factura', (err, result) => {
+            if (err) {
+                res.status(500).send(err);
+            } else {
+                res.json(result.rows);
+            }
+        });
+    });
+
 });
 
 // Rutas para operaciones específicas de admin-comercializacion
