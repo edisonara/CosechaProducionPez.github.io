@@ -150,3 +150,60 @@ SELECT id_detalle_venta, cliente_id, estanque_id, fecha_pedido, cantidad, precio
 FROM Comercializacion.Detalle_venta;
 
 
+CREATE VIEW Cosecha.vista_trabajadores_asignaciones AS
+SELECT 
+    t.id_trabajador, 
+    t.nombre, 
+    t.apellido, 
+    a.id_asignacion, 
+    a.fecha_asignacion, 
+    j.nombre AS trabajo
+FROM 
+    Cosecha.Trabajador t
+JOIN 
+    Cosecha.Asignacion a ON t.id_trabajador = a.trabajador_id
+JOIN 
+    Cosecha.Trabajo j ON a.trabajo_id = j.id_trabajo;
+
+
+CREATE VIEW Cosecha.vista_estanques_operaciones AS
+SELECT 
+    e.id_estanque, 
+    e.ubicacion, 
+    e.capacidad, 
+    o.cantidad, 
+    o.fecha_cosecha
+FROM 
+    Cosecha.Estanques_Detalle e
+JOIN 
+    Cosecha.Estanques_Operaciones o ON e.id_estanque = o.id_estanque;
+
+CREATE VIEW Comercializacion.vista_clientes_pedidos AS
+SELECT 
+    c.id_cliente, 
+    c.nombre, 
+    c.direccion, 
+    d.id_detalle_venta, 
+    d.fecha_pedido, 
+    d.cantidad, 
+    d.precio
+FROM 
+    Comercializacion.Cliente c
+JOIN 
+    Comercializacion.Detalle_venta d ON c.id_cliente = d.cliente_id;
+
+CREATE VIEW Comercializacion.vista_facturas_detalles AS
+SELECT 
+    f.id_factura, 
+    f.fecha_factura, 
+    d.id_detalle_venta, 
+    d.fecha_pedido, 
+    d.cantidad, 
+    d.precio
+FROM 
+    Comercializacion.Factura f
+JOIN 
+    Comercializacion.Detalle_venta d ON f.pedidos_id = d.id_detalle_venta;
+
+
+
