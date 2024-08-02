@@ -71,32 +71,7 @@ app.get('/admin-comercializacion', (req, res) => {
 app.get('/general', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'general.html'));
 });
-app.post('/general/query', async (req, res) => {
-    const { query } = req.body;
 
-    if (!query) {
-        return res.status(400).send('Query parameter is required');
-    }
-
-    const client = new Client({
-        host: '4.203.136.126',
-        port: 5432,
-        user: 'user_rol_general',
-        password: '123',
-        database: 'ProyectoG6'
-    });
-
-    try {
-        await client.connect();
-        const result = await client.query(query);
-        res.json(result.rows);
-    } catch (err) {
-        console.error('Query error', err.stack);
-        res.status(500).send('Error executing query');
-    } finally {
-        await client.end();
-    }
-});
 // Helper function to create a new client and connect to the database
 const createDbClient = (user, password) => {
     return new Client({
@@ -111,7 +86,16 @@ const createDbClient = (user, password) => {
 // Rutas para operaciones específicas de admin-cosecha
 app.post('/admin-cosecha/add-fish', (req, res) => {
     const { fishName, fishInfo } = req.body;
-    const client = createDbClient('user_admin_cosecha', '123');
+    const client = new Client({
+        host: '4.203.136.126',
+        port: 5432,
+        user: 'user_admin_cosecha',
+        password: '123',
+        database: 'ProyectoG6'
+    });
+   
+
+   // const client = createDbClient('user_admin_cosecha', '123');
 
     client.connect(err => {
         if (err) {
@@ -133,34 +117,92 @@ app.post('/admin-cosecha/add-fish', (req, res) => {
             );
         }
     });
+
+    // Ruta para obtener los datos de Control_Salud
+app.get('/admin-cosecha/control-salud', async (req, res) => {
+    const client = new Client({
+        host: '4.203.136.126',
+        port: 5432,
+        user: 'user_admin_cosecha',
+        password: '123',
+        database: 'ProyectoG6'
+    });
+
+    try {
+        await client.connect();
+        const result = await client.query('SELECT * FROM Cosecha.Control_Salud');
+        res.json(result.rows);
+    } catch (error) {
+        console.error('Error fetching control salud data:', error);
+        res.status(500).send('Error fetching control salud data');
+    } finally {
+        client.end();
+    }
+});
+
+
+    app.use(bodyParser.json());
+    app.use(express.static('public'));
+
+    // Endpoints para clientes
+    app.get('/api/clientes', (req, res) => {
+        client.query('SELECT * FROM Comercializacion.Cliente', (err, result) => {
+            if (err) {
+                res.status(500).send(err);
+            } else {
+                res.json(result.rows);
+            }
+        });
+    });
+
+    app.delete('/api/clientes/:id', (req, res) => {
+        const id = req.params.id;
+        client.query('DELETE FROM Comercializacion.Cliente WHERE id_cliente = $1', [id], (err, result) => {
+            if (err) {
+                res.status(500).send(err);
+            } else {
+                res.sendStatus(204);
+            }
+        });
+    });
+
+    // Endpoints para detalle-venta
+    app.get('/api/detalle-venta', (req, res) => {
+        client.query('SELECT * FROM Comercializacion.Detalle_venta', (err, result) => {
+            if (err) {
+                res.status(500).send(err);
+            } else {
+                res.json(result.rows);
+            }
+        });
+    });
+
+    app.delete('/api/detalle-venta/:id', (req, res) => {
+        const id = req.params.id;
+        client.query('DELETE FROM Comercializacion.Detalle_venta WHERE id_detalle_venta = $1', [id], (err, result) => {
+            if (err) {
+                res.status(500).send(err);
+            } else {
+                res.sendStatus(204);
+            }
+        });
+    });
+
+    // Endpoints para factura
+    app.get('/api/factura', (req, res) => {
+        client.query('SELECT * FROM Comercializacion.Factura', (err, result) => {
+            if (err) {
+                res.status(500).send(err);
+            } else {
+                res.json(result.rows);
+            }
+        });
+    });
+
 });
 
 // Rutas para operaciones específicas de admin-comercializacion
-
-// Obtener todos los clientes
-app.get('/api/clientes', (req, res) => {
-    const client = createDbClient('user_admin_comercializacion', '123');
-
-    client.connect(err => {
-        if (err) {
-            console.error('Connection error', err.stack);
-            res.status(500).send('Database connection error');
-        } else {
-            client.query('SELECT * FROM Comercializacion.Cliente', (err, result) => {
-                if (err) {
-                    console.error('Query error', err.stack);
-                    res.status(500).send('Error fetching clients');
-                } else {
-                    res.json(result.rows);
-                }
-                client.end();
-            });
-        }
-    });
-});
-
-// Crear un nuevo cliente
-app.post('/api/clientes', (req, res) => {
+app.post('/admin-comercializacion/add-client', (req, res) => {
     const { clientName, clientAddress, clientEmail, clientPhone } = req.body;
     const client = createDbClient('user_admin_comercializacion', '123');
 
@@ -186,10 +228,48 @@ app.post('/api/clientes', (req, res) => {
     });
 });
 
-// Actualizar un cliente existente
-app.put('/api/clientes/:id', (req, res) => {
-    const id = req.params.id;
-    const { clientName, clientAddress, clientEmail, clientPhone } = req.body;
+// Helper function to fetch data from the database
+const fetchData = (res, client, query, params = []) => {
+    client.query(query, params, (err, result) => {
+        if (err) {
+            console.error('Query error', err.stack);
+            res.status(500).send('Error fetching data');
+        } else {
+            res.json(result.rows);
+        }
+        client.end();
+    });
+};
+
+// Rutas para operaciones de lectura del usuario general
+app.get('/general/fish', (req, res) => {
+    const client = createDbClient('user_rol_general', '123');
+    
+    client.connect(err => {
+        if (err) {
+            console.error('Connection error', err.stack);
+            res.status(500).send('Database connection error');
+        } else {
+            fetchData(res, client, 'SELECT * FROM Cosecha.Peces');
+        }
+    });
+});
+
+app.get('/general/clients', (req, res) => {
+    const client = createDbClient('user_rol_general', '123');
+
+    client.connect(err => {
+        if (err) {
+            console.error('Connection error', err.stack);
+            res.status(500).send('Database connection error');
+        } else {
+            fetchData(res, client, 'SELECT * FROM Comercializacion.Cliente');
+        }
+    });
+});
+
+// Endpoints para clientes
+app.get('/api/clientes', (req, res) => {
     const client = createDbClient('user_admin_comercializacion', '123');
 
     client.connect(err => {
@@ -197,24 +277,11 @@ app.put('/api/clientes/:id', (req, res) => {
             console.error('Connection error', err.stack);
             res.status(500).send('Database connection error');
         } else {
-            client.query(
-                'UPDATE Comercializacion.Cliente SET nombre = $1, direccion = $2, email = $3, telefono = $4 WHERE id_cliente = $5',
-                [clientName, clientAddress, clientEmail, clientPhone, id],
-                (err, result) => {
-                    if (err) {
-                        console.error('Query error', err.stack);
-                        res.status(500).send('Error updating client');
-                    } else {
-                        res.send('Client updated successfully');
-                    }
-                    client.end();
-                }
-            );
+            fetchData(res, client, 'SELECT * FROM Comercializacion.Cliente');
         }
     });
 });
 
-// Eliminar un cliente
 app.delete('/api/clientes/:id', (req, res) => {
     const id = req.params.id;
     const client = createDbClient('user_admin_comercializacion', '123');
@@ -237,7 +304,7 @@ app.delete('/api/clientes/:id', (req, res) => {
     });
 });
 
-// Obtener todos los detalles de venta
+// Endpoints para detalle-venta
 app.get('/api/detalle-venta', (req, res) => {
     const client = createDbClient('user_admin_comercializacion', '123');
 
@@ -246,75 +313,11 @@ app.get('/api/detalle-venta', (req, res) => {
             console.error('Connection error', err.stack);
             res.status(500).send('Database connection error');
         } else {
-            client.query('SELECT * FROM Comercializacion.Detalle_venta', (err, result) => {
-                if (err) {
-                    console.error('Query error', err.stack);
-                    res.status(500).send('Error fetching detalle-venta');
-                } else {
-                    res.json(result.rows);
-                }
-                client.end();
-            });
+            fetchData(res, client, 'SELECT * FROM Comercializacion.Detalle_venta');
         }
     });
 });
 
-// Crear un nuevo detalle de venta
-app.post('/api/detalle-venta', (req, res) => {
-    const { cliente_id, estanque_id, fecha_pedido, fecha_entrega, cantidad, precio } = req.body;
-    const client = createDbClient('user_admin_comercializacion', '123');
-
-    client.connect(err => {
-        if (err) {
-            console.error('Connection error', err.stack);
-            res.status(500).send('Database connection error');
-        } else {
-            client.query(
-                'INSERT INTO Comercializacion.Detalle_venta (cliente_id, estanque_id, fecha_pedido, fecha_entrega, cantidad, precio) VALUES ($1, $2, $3, $4, $5, $6)',
-                [cliente_id, estanque_id, fecha_pedido, fecha_entrega, cantidad, precio],
-                (err, result) => {
-                    if (err) {
-                        console.error('Query error', err.stack);
-                        res.status(500).send('Error adding detalle-venta');
-                    } else {
-                        res.send('Detalle de venta added successfully');
-                    }
-                    client.end();
-                }
-            );
-        }
-    });
-});
-
-// Actualizar un detalle de venta existente
-app.put('/api/detalle-venta/:id', (req, res) => {
-    const id = req.params.id;
-    const { cliente_id, estanque_id, fecha_pedido, fecha_entrega, cantidad, precio } = req.body;
-    const client = createDbClient('user_admin_comercializacion', '123');
-
-    client.connect(err => {
-        if (err) {
-            console.error('Connection error', err.stack);
-            res.status(500).send('Database connection error');
-        } else {
-            client.query(
-                'UPDATE Comercializacion.Detalle_venta SET cliente_id = $1, estanque_id = $2, fecha_pedido = $3, fecha_entrega = $4, cantidad = $5, precio = $6 WHERE id_detalle_venta = $7',
-                [cliente_id, estanque_id, fecha_pedido, fecha_entrega, cantidad, precio, id],
-                (err, result) => {
-                    if (err) {
-                        console.error('Query error', err.stack);
-                        res.status(500).send('Error updating detalle-venta');
-                    } else {
-                        res.send('Detalle de venta updated successfully');
-                    }
-                    client.end();
-                }
-            );
-        }
-    });
-});
-
-// Eliminar un detalle de venta
 app.delete('/api/detalle-venta/:id', (req, res) => {
     const id = req.params.id;
     const client = createDbClient('user_admin_comercializacion', '123');
@@ -337,7 +340,7 @@ app.delete('/api/detalle-venta/:id', (req, res) => {
     });
 });
 
-// Obtener todas las facturas
+// Endpoints para factura
 app.get('/api/factura', (req, res) => {
     const client = createDbClient('user_admin_comercializacion', '123');
 
@@ -346,20 +349,11 @@ app.get('/api/factura', (req, res) => {
             console.error('Connection error', err.stack);
             res.status(500).send('Database connection error');
         } else {
-            client.query('SELECT * FROM Comercializacion.Factura', (err, result) => {
-                if (err) {
-                    console.error('Query error', err.stack);
-                    res.status(500).send('Error fetching facturas');
-                } else {
-                    res.json(result.rows);
-                }
-                client.end();
-            });
+            fetchData(res, client, 'SELECT * FROM Comercializacion.Factura');
         }
     });
 });
 
-// Iniciar el servidor
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });

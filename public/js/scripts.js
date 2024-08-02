@@ -66,24 +66,51 @@ function showAddClientForm() {
 }
 
 // Enviar los datos del nuevo cliente al servidor
-function addClient() {
-    const clientData = {
-        nombre: $('#clientName').val(),
-        direccion: $('#clientAddress').val(),
-        email: $('#clientEmail').val(),
-        telefono: $('#clientPhone').val()
-    };
-
-    $.ajax({
-        url: '/api/clientes',
+// Función para insertar un cliente
+function addClient(client) {
+    fetch('/api/clientes', {
         method: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(clientData),
-        success: function() {
-            loadClientData();
-            $('#clientForm').hide(); // Ocultar el formulario después de añadir
-            $('#overlay').hide();
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(client)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error adding client');
         }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Client added successfully:', data);
+        // Aquí puedes actualizar la UI o hacer cualquier otra cosa que necesites
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+// Función para actualizar un cliente
+function updateClient(id, client) {
+    fetch(`/api/clientes/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(client)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error updating client');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Client updated successfully:', data);
+        // Aquí puedes actualizar la UI o hacer cualquier otra cosa que necesites
+    })
+    .catch(error => {
+        console.error('Error:', error);
     });
 }
 
