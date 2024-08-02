@@ -90,6 +90,8 @@ function addClient(client) {
     });
 }
 
+
+
 // Función para actualizar un cliente
 function updateClient(id, client) {
     fetch(`/api/clientes/${id}`, {
@@ -132,28 +134,7 @@ function showEditClientForm(id) {
     });
 }
 
-// Enviar los datos modificados del cliente al servidor
-function updateClient() {
-    const id = $('#clientForm').data('id');
-    const clientData = {
-        nombre: $('#clientName').val(),
-        direccion: $('#clientAddress').val(),
-        email: $('#clientEmail').val(),
-        telefono: $('#clientPhone').val()
-    };
 
-    $.ajax({
-        url: `/api/clientes/${id}`,
-        method: 'PUT',
-        contentType: 'application/json',
-        data: JSON.stringify(clientData),
-        success: function() {
-            loadClientData();
-            $('#clientForm').hide(); // Ocultar el formulario después de actualizar
-            $('#overlay').hide();
-        }
-    });
-}
 
 // Cargar datos de detalles de venta
 function loadDetailData() {

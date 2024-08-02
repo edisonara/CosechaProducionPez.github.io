@@ -4,13 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Clientes</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h1>Gestión de Clientes</h1>
-        <button class="btn btn-primary" onclick="showAddClientForm()">Añadir Cliente</button>
-        <table class="table table-striped mt-3">
+    <div class="container mt-5">
+        <h2>Gestión de Clientes</h2>
+        <form id="addClientForm" class="mb-4">
+            <div class="form-group">
+                <label for="clientName">Nombre</label>
+                <input type="text" class="form-control" id="clientName" required>
+            </div>
+            <div class="form-group">
+                <label for="clientAddress">Dirección</label>
+                <input type="text" class="form-control" id="clientAddress">
+            </div>
+            <div class="form-group">
+                <label for="clientEmail">Email</label>
+                <input type="email" class="form-control" id="clientEmail">
+            </div>
+            <div class="form-group">
+                <label for="clientPhone">Teléfono</label>
+                <input type="text" class="form-control" id="clientPhone">
+            </div>
+            <button type="submit" class="btn btn-primary">Agregar Cliente</button>
+        </form>
+        <h3>Lista de Clientes</h3>
+        <table class="table table-bordered" id="clientsTable">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -21,24 +40,13 @@
                     <th>Acciones</th>
                 </tr>
             </thead>
-            <tbody id="clientTable"></tbody>
+            <tbody>
+                <!-- Aquí se insertarán las filas de clientes -->
+            </tbody>
         </table>
     </div>
-
-    <!-- Formulario para añadir/editar cliente -->
-    <div id="overlay" style="display:none;">
-        <div id="clientForm" style="display:none;">
-            <h2 id="formTitle"></h2>
-            <input type="text" id="clientName" placeholder="Nombre">
-            <input type="text" id="clientAddress" placeholder="Dirección">
-            <input type="email" id="clientEmail" placeholder="Email">
-            <input type="text" id="clientPhone" placeholder="Teléfono">
-            <button id="saveClientBtn" class="btn btn-success">Guardar</button>
-            <button class="btn btn-secondary" onclick="$('#clientForm').hide(); $('#overlay').hide();">Cancelar</button>
-        </div>
-    </div>
-
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="js/scripts.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="js/cliente.js"></script>
 </body>
 </html>
