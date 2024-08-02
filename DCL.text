@@ -11,3 +11,9 @@ GRANT SELECT ON ALL TABLES IN SCHEMA Cosecha, Comercializacion TO rol_general;
 -- Asignar permisos a las vistas
 GRANT SELECT ON Cosecha.vista_peces TO admin_cosecha, admin_comercializacion, rol_general;
 GRANT SELECT ON Comercializacion.vista_detalle_ventas TO admin_cosecha, admin_comercializacion, rol_general;
+
+GRANT SELECT ON Cosecha.vista_trabajadores_asignaciones TO admin_cosecha, admin_comercializacion, rol_general;
+GRANT SELECT ON Cosecha.vista_estanques_operaciones TO admin_cosecha, admin_comercializacion, rol_general;
+
+GRANT SELECT ON Comercializacion.vista_clientes_pedidos TO admin_cosecha, admin_comercializacion, rol_general;
+GRANT SELECT ON Comercializacion.vista_facturas_detalles TO admin_cosecha, admin_comercializacion, rol_general;
