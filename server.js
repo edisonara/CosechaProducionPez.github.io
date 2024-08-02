@@ -320,6 +320,48 @@ app.get('/api/factura', async (req, res) => {
         });
     });
 
+    // Endpoint para insertar un nuevo cliente
+    app.post('/api/clientes', (req, res) => {
+        const { nombre, direccion, email, telefono } = req.body;
+        const query = `
+            INSERT INTO Comercializacion.Cliente (nombre, direccion, email, telefono)
+            VALUES ($1, $2, $3, $4)
+            RETURNING id_cliente
+        `;
+        const values = [nombre, direccion, email, telefono];
+
+        client.query(query, values, (err, result) => {
+            if (err) {
+                res.status(500).send(err);
+            } else {
+                res.status(201).json({ id_cliente: result.rows[0].id_cliente });
+            }
+        });
+    });
+
+    // Endpoint para actualizar un cliente existente
+    app.put('/api/clientes/:id', (req, res) => {
+        const id = req.params.id;
+        const { nombre, direccion, email, telefono } = req.body;
+        const query = `
+            UPDATE Comercializacion.Cliente
+            SET nombre = $1, direccion = $2, email = $3, telefono = $4
+            WHERE id_cliente = $5
+        `;
+        const values = [nombre, direccion, email, telefono, id];
+
+        client.query(query, values, (err, result) => {
+            if (err) {
+                res.status(500).send(err);
+            } else if (result.rowCount === 0) {
+                res.status(404).send('Cliente no encontrado');
+            } else {
+                res.sendStatus(204);
+            }
+        });
+    });
+
+
     // Endpoints para detalle-venta
     app.get('/api/detalle-venta', (req, res) => {
         client.query('SELECT * FROM Comercializacion.Detalle_venta', (err, result) => {
