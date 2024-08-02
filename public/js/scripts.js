@@ -305,40 +305,54 @@ function loadFacturaData() {
         }
     });
 }
+async function loadStatistics() {
+    try {
+        // Obtener datos de ventas mensuales
+        const response1 = await fetch('/api/ventas-mensuales');
+        const ventasMensuales = await response1.json();
 
-// Función para cargar estadísticas
-function loadStatistics() {
-    const chartData1 = {
-        labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'],
-        datasets: [{
-            label: 'Ventas',
-            data: [120, 150, 180, 220, 300, 400],
-            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            borderColor: 'rgba(54, 162, 235, 1)',
-            borderWidth: 1
-        }]
-    };
+        const chartData1 = {
+            labels: ventasMensuales.labels,
+            datasets: [{
+                label: 'Ventas Mensuales',
+                data: ventasMensuales.data,
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        };
 
-    const chartData2 = {
-        labels: ['Producto A', 'Producto B', 'Producto C'],
-        datasets: [{
-            label: 'Cantidad Vendida',
-            data: [300, 450, 120],
-            backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(75, 192, 192, 0.2)'],
-            borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(75, 192, 192, 1)'],
-            borderWidth: 1
-        }]
-    };
+        const ctx1 = document.getElementById('chart1').getContext('2d');
+        const chart1 = new Chart(ctx1, {
+            type: 'line',
+            data: chartData1
+        });
 
-    const ctx1 = document.getElementById('chart1').getContext('2d');
-    const chart1 = new Chart(ctx1, {
-        type: 'line',
-        data: chartData1
-    });
+        // Obtener datos de ventas por producto
+        const response2 = await fetch('/api/ventas-por-producto');
+        const ventasPorProducto = await response2.json();
 
-    const ctx2 = document.getElementById('chart2').getContext('2d');
-    const chart2 = new Chart(ctx2, {
-        type: 'bar',
-        data: chartData2
-    });
+        const chartData2 = {
+            labels: ventasPorProducto.labels,
+            datasets: [{
+                label: 'Ventas por Producto',
+                data: ventasPorProducto.data,
+                backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(75, 192, 192, 0.2)'],
+                borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(75, 192, 192, 1)'],
+                borderWidth: 1
+            }]
+        };
+
+        const ctx2 = document.getElementById('chart2').getContext('2d');
+        const chart2 = new Chart(ctx2, {
+            type: 'bar',
+            data: chartData2
+        });
+
+    } catch (error) {
+        console.error('Error loading statistics', error);
+    }
 }
+
+// Cargar estadísticas cuando la página esté lista
+document.addEventListener('DOMContentLoaded', loadStatistics);

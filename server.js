@@ -424,6 +424,72 @@ app.get('/api/factura', (req, res) => {
     });
 });
 
+
+// Endpoint para obtener ventas mensuales
+app.get('/api/ventas-mensuales', (req, res) => {
+    const client = createDbClient('user_admin_comercializacion', '123');
+
+    client.connect(err => {
+        if (err) {
+            console.error('Connection error', err.stack);
+            res.status(500).send('Database connection error');
+        } else {
+            client.query(
+                `SELECT EXTRACT(MONTH FROM fecha_pedido) AS mes, SUM(cantidad) AS total_ventas
+                 FROM Comercializacion.Detalle_venta
+                 GROUP BY mes
+                 ORDER BY mes`,
+                (err, result) => {
+                    if (err) {
+                        console.error('Query error', err.stack);
+                        res.status(500).send('Error fetching sales data');
+                    } else {
+                        // Transformar los datos para la gráfica
+                        const data = result.rows.map(row => row.total_ventas);
+                        const labels = result.rows.map(row => ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'][row.mes - 1]);
+
+                        res.json({ labels, data });
+                    }
+                    client.end();
+                }
+            );
+        }
+    });
+});
+
+// Endpoint para obtener ventas por producto
+app.get('/api/ventas-por-producto', (req, res) => {
+    const client = createDbClient('user_admin_comercializacion', '123');
+
+    client.connect(err => {
+        if (err) {
+            console.error('Connection error', err.stack);
+            res.status(500).send('Database connection error');
+        } else {
+            client.query(
+                `SELECT p.nombre AS producto, SUM(d.cantidad) AS total_vendida
+                 FROM Comercializacion.Detalle_venta d
+                 JOIN Comercializacion.Producto p ON d.producto_id = p.id_producto
+                 GROUP BY p.nombre`,
+                (err, result) => {
+                    if (err) {
+                        console.error('Query error', err.stack);
+                        res.status(500).send('Error fetching product sales data');
+                    } else {
+                        // Transformar los datos para la gráfica
+                        const data = result.rows.map(row => row.total_vendida);
+                        const labels = result.rows.map(row => row.producto);
+
+                        res.json({ labels, data });
+                    }
+                    client.end();
+                }
+            );
+        }
+    });
+});
+
+
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
