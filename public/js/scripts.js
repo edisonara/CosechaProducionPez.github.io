@@ -26,7 +26,7 @@ $(document).ready(function() {
     });
 });
 
-
+// Función para cargar datos de los clientes
 function loadClientData() {
     $.ajax({
         url: '/api/clientes',
@@ -36,7 +36,6 @@ function loadClientData() {
             data.forEach(cliente => {
                 $('#clientTable').append(`
                     <tr>
-                        <td>${cliente.id_cliente}</td>
                         <td>${cliente.nombre}</td>
                         <td>${cliente.direccion}</td>
                         <td>${cliente.email}</td>
@@ -55,6 +54,25 @@ function loadClientData() {
     });
 }
 
+// Función para editar un cliente (implementación requerida)
+function editClient() {
+    const id = $(this).data('id');
+    // Aquí puedes abrir un modal o una nueva página para editar los detalles del cliente
+}
+
+// Función para eliminar un cliente
+function deleteClient() {
+    const id = $(this).data('id');
+    $.ajax({
+        url: `/api/clientes/${id}`,
+        method: 'DELETE',
+        success: function() {
+            loadClientData();
+        }
+    });
+}
+
+// Función para cargar datos de detalle de ventas
 function loadDetailData() {
     $.ajax({
         url: '/api/detalle-venta',
@@ -85,6 +103,25 @@ function loadDetailData() {
     });
 }
 
+// Función para editar un detalle de venta (implementación requerida)
+function editDetail() {
+    const id = $(this).data('id');
+    // Aquí puedes abrir un modal o una nueva página para editar los detalles del detalle de venta
+}
+
+// Función para eliminar un detalle de venta
+function deleteDetail() {
+    const id = $(this).data('id');
+    $.ajax({
+        url: `/api/detalle-venta/${id}`,
+        method: 'DELETE',
+        success: function() {
+            loadDetailData();
+        }
+    });
+}
+
+// Función para cargar datos de facturas
 function loadFacturaData() {
     $.ajax({
         url: '/api/factura',
@@ -105,6 +142,7 @@ function loadFacturaData() {
     });
 }
 
+// Función para cargar estadísticas
 function loadStatistics() {
     const chartData1 = {
         labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'],
@@ -141,34 +179,8 @@ function loadStatistics() {
     });
 }
 
-function editClient() {
-    const id = $(this).data('id');
-    // Open modal to edit client details (Implementation required)
-}
-
-function deleteClient() {
-    const id = $(this).data('id');
-    $.ajax({
-        url: `/api/clientes/${id}`,
-        method: 'DELETE',
-        success: function() {
-            loadClientData();
-        }
-    });
-}
-
-function editDetail() {
-    const id = $(this).data('id');
-    // Open modal to edit detail venta (Implementation required)
-}
-
-function deleteDetail() {
-    const id = $(this).data('id');
-    $.ajax({
-        url: `/api/detalle-venta/${id}`,
-        method: 'DELETE',
-        success: function() {
-            loadDetailData();
-        }
-    });
-}
+// Cargar datos de clientes cuando el documento esté listo
+$(document).ready(function() {
+    loadClientData();
+    // Puedes agregar otras funciones de carga de datos aquí
+});
