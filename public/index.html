@@ -26,21 +26,33 @@
             align-items: center;
             justify-content: center;
             color: #fff;
+            overflow: hidden;
         }
-        .login-container {
+        .container {
+            display: flex;
+            align-items: stretch;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+            max-width: 1000px;
+            padding: 20px;
+        }
+        .login-container, .welcome-box {
             background: rgba(75, 75, 75, 0.8);
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
             max-width: 400px;
             width: 100%;
-            position: relative;
-            z-index: 2;
+            flex: 1;
+        }
+        .login-container {
+            background: rgba(75, 75, 75, 0.8);
         }
         .login-container h2 {
             margin-bottom: 20px;
             font-size: 1.75rem;
-            color: #000000;
+            color: #ffffff;
             text-align: center;
         }
         .login-container .form-group {
@@ -70,6 +82,21 @@
         .login-container .btn-primary:hover {
             background-color: #004080;
             border-color: #003366;
+        }
+        .welcome-box {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            color: #333;
+        }
+        .welcome-box h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        .welcome-box p {
+            color: #666;
+            font-size: 1rem;
         }
         .ui {
             display: none;
@@ -103,19 +130,26 @@
     <title>Login</title>
 </head>
 <body>
-    <div class="login-container">
-        <h2>Login</h2>
-        <form action="/login" method="post">
-            <div class="form-group">
-                <i class="fas fa-user"></i>
-                <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
-            </div>
-            <div class="form-group">
-                <i class="fas fa-lock"></i>
-                <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Login</button>
-        </form>
+    <div class="container">
+        <div class="login-container">
+            <h2>Ingresar Sistema</h2>
+            <form action="/login" method="post">
+                <div class="form-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
+                </div>
+                <div class="form-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Iniciar</button>
+            </form>
+        </div>
+
+        <div class="welcome-box">
+            <h2>BeastComplay</h2>
+            <p>Descubra las mejores prácticas en acuicultura y gestione sus operaciones de piscicultura de manera eficiente. Inicie sesión para acceder a nuestras herramientas y recursos diseñados para mejorar su productividad y conocimientos en el campo de la piscicultura.</p>
+        </div>
     </div>
 
     <div class="ui">
