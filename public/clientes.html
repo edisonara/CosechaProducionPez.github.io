@@ -6,6 +6,32 @@
     <title>Clientes</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        #clientForm, #detailForm {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            width: 80%;
+            max-width: 500px;
+            display: none;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -18,6 +44,7 @@
         <table class="table table-striped">
             <thead>
                 <tr>
+                    <th>ID</th>
                     <th>Nombre</th>
                     <th>Dirección</th>
                     <th>Email</th>
@@ -30,6 +57,66 @@
             </tbody>
         </table>
     </div>
+
+    <!-- Formulario para añadir/editar cliente -->
+    <div id="clientForm">
+        <h3 id="formTitle">Añadir Cliente</h3>
+        <form>
+            <div class="form-group">
+                <label for="clientName">Nombre</label>
+                <input type="text" class="form-control" id="clientName" required>
+            </div>
+            <div class="form-group">
+                <label for="clientAddress">Dirección</label>
+                <input type="text" class="form-control" id="clientAddress">
+            </div>
+            <div class="form-group">
+                <label for="clientEmail">Email</label>
+                <input type="email" class="form-control" id="clientEmail">
+            </div>
+            <div class="form-group">
+                <label for="clientPhone">Teléfono</label>
+                <input type="text" class="form-control" id="clientPhone">
+            </div>
+            <button type="button" class="btn btn-primary" id="saveClientBtn">Guardar</button>
+            <button type="button" class="btn btn-secondary" id="cancelClientBtn">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Formulario para añadir/editar detalle de venta -->
+    <div id="detailForm">
+        <h3 id="formTitle">Añadir Detalle de Venta</h3>
+        <form>
+            <div class="form-group">
+                <label for="clientId">Cliente ID</label>
+                <input type="text" class="form-control" id="clientId" required>
+            </div>
+            <div class="form-group">
+                <label for="estanqueId">Estanque ID</label>
+                <input type="text" class="form-control" id="estanqueId">
+            </div>
+            <div class="form-group">
+                <label for="orderDate">Fecha Pedido</label>
+                <input type="date" class="form-control" id="orderDate">
+            </div>
+            <div class="form-group">
+                <label for="deliveryDate">Fecha Entrega</label>
+                <input type="date" class="form-control" id="deliveryDate">
+            </div>
+            <div class="form-group">
+                <label for="quantity">Cantidad</label>
+                <input type="number" class="form-control" id="quantity">
+            </div>
+            <div class="form-group">
+                <label for="price">Precio</label>
+                <input type="number" class="form-control" id="price" step="0.01">
+            </div>
+            <button type="button" class="btn btn-primary" id="saveDetailBtn">Guardar</button>
+            <button type="button" class="btn btn-secondary" id="cancelDetailBtn">Cancelar</button>
+        </form>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
 
     <footer class="footer">
         <p>&copy; 2024 Admin Comercialización</p>
