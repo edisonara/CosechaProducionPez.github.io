@@ -77,7 +77,8 @@ header.admin-cosecha {
 }
 
 #showcase.admin-cosecha {
-    background: url('../img/showcase.jpg') no-repeat 0 -100px;
+    background: url('https://images.unsplash.com/photo-1529057018378-07c51d77da73?q=80&w=1771&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat 0 -100px;
+    
 }
 
 /* Estilos específicos para Admin Comercializacion */
@@ -91,7 +92,7 @@ header.admin-comercializacion {
 }
 
 #showcase.admin-comercializacion {
-    background: url('../img/showcase2.jpg') no-repeat 0 -100px;
+    background: url('https://images.unsplash.com/photo-1485452499676-62ab02c20e83?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat 0 -100px;
 }
 
 /* Estilos específicos para General */
