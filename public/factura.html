@@ -3,37 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Factura</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <title>Facturas</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="admin-comercializacion.html">Admin Comercialización</a>
-    </nav>
-
     <div class="container">
-        <h2 class="mt-4">Factura</h2>
-        <table class="table table-striped">
+        <h1>Facturas</h1>
+        <button class="btn btn-primary" onclick="showAddFacturaForm()">Añadir Factura</button>
+        <table class="table table-striped mt-3">
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Pedido ID</th>
-                    <th>Encargado ID</th>
+                    <th>ID Pedido</th>
+                    <th>ID Encargado</th>
                     <th>Fecha Factura</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
-            <tbody id="facturaTable">
-                <!-- Facturas serán cargadas aquí -->
-            </tbody>
+            <tbody id="facturaTable"></tbody>
         </table>
     </div>
 
-    <footer class="footer">
-        <p>&copy; 2024 Admin Comercialización</p>
-    </footer>
+    <!-- Formulario para añadir/editar factura -->
+    <div id="overlay" style="display:none;">
+        <div id="facturaForm" style="display:none;">
+            <h2 id="formTitle"></h2>
+            <input type="text" id="pedidoId" placeholder="ID Pedido">
+            <input type="text" id="encargadoId" placeholder="ID Encargado">
+            <input type="date" id="facturaDate" placeholder="Fecha Factura">
+            <button id="saveFacturaBtn" class="btn btn-success">Guardar</button>
+            <button class="btn btn-secondary" onclick="$('#facturaForm').hide(); $('#overlay').hide();">Cancelar</button>
+        </div>
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="js/scripts.js"></script>
+    <script src="public/js/script.js"></script>
 </body>
 </html>

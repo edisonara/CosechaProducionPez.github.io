@@ -3,50 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalle de Venta</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <style>
-        #clientForm, #detailForm {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            width: 80%;
-            max-width: 500px;
-            display: none;
-        }
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-            display: none;
-        }
-    </style>
+    <title>Detalles de Venta</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="admin-comercializacion.html">Admin Comercialización</a>
-    </nav>
-
     <div class="container">
-        <h2 class="mt-4">Detalle de Venta</h2>
-        <button class="btn btn-primary mb-3" id="addDetailBtn">Añadir Detalle de Venta</button>
-        <table class="table table-striped">
+        <h1>Detalles de Venta</h1>
+        <button class="btn btn-primary" onclick="showAddDetailForm()">Añadir Detalle de Venta</button>
+        <table class="table table-striped mt-3">
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Cliente ID</th>
-                    <th>Estanque ID</th>
+                    <th>ID Cliente</th>
+                    <th>ID Estanque</th>
                     <th>Fecha Pedido</th>
                     <th>Fecha Entrega</th>
                     <th>Cantidad</th>
@@ -54,52 +23,26 @@
                     <th>Acciones</th>
                 </tr>
             </thead>
-            <tbody id="detailTable">
-                <!-- Detalle de ventas serán cargados aquí -->
-            </tbody>
+            <tbody id="detailTable"></tbody>
         </table>
     </div>
 
     <!-- Formulario para añadir/editar detalle de venta -->
-    <div id="detailForm">
-        <h3 id="formTitle">Añadir Detalle de Venta</h3>
-        <form>
-            <div class="form-group">
-                <label for="clientId">Cliente ID</label>
-                <input type="text" class="form-control" id="clientId" required>
-            </div>
-            <div class="form-group">
-                <label for="estanqueId">Estanque ID</label>
-                <input type="text" class="form-control" id="estanqueId">
-            </div>
-            <div class="form-group">
-                <label for="orderDate">Fecha Pedido</label>
-                <input type="date" class="form-control" id="orderDate">
-            </div>
-            <div class="form-group">
-                <label for="deliveryDate">Fecha Entrega</label>
-                <input type="date" class="form-control" id="deliveryDate">
-            </div>
-            <div class="form-group">
-                <label for="quantity">Cantidad</label>
-                <input type="number" class="form-control" id="quantity">
-            </div>
-            <div class="form-group">
-                <label for="price">Precio</label>
-                <input type="number" class="form-control" id="price" step="0.01">
-            </div>
-            <button type="button" class="btn btn-primary" id="saveDetailBtn">Guardar</button>
-            <button type="button" class="btn btn-secondary" id="cancelDetailBtn">Cancelar</button>
-        </form>
+    <div id="overlay" style="display:none;">
+        <div id="detailForm" style="display:none;">
+            <h2 id="formTitle"></h2>
+            <input type="text" id="clientId" placeholder="ID Cliente">
+            <input type="text" id="estanqueId" placeholder="ID Estanque">
+            <input type="date" id="orderDate" placeholder="Fecha Pedido">
+            <input type="date" id="deliveryDate" placeholder="Fecha Entrega">
+            <input type="number" id="quantity" placeholder="Cantidad">
+            <input type="number" id="price" placeholder="Precio">
+            <button id="saveDetailBtn" class="btn btn-success">Guardar</button>
+            <button class="btn btn-secondary" onclick="$('#detailForm').hide(); $('#overlay').hide();">Cancelar</button>
+        </div>
     </div>
 
-    <div class="overlay" id="overlay"></div>
-
-    <footer class="footer">
-        <p>&copy; 2024 Admin Comercialización</p>
-    </footer>
-
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="js/scripts.js"></script>
+    <script src="public/js/script.js"></script>
 </body>
 </html>

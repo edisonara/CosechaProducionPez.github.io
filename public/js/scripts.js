@@ -66,51 +66,24 @@ function showAddClientForm() {
 }
 
 // Enviar los datos del nuevo cliente al servidor
-// Función para insertar un cliente
-function addClient(client) {
-    fetch('/api/clientes', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(client)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Error adding client');
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Client added successfully:', data);
-        // Aquí puedes actualizar la UI o hacer cualquier otra cosa que necesites
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-}
+function addClient() {
+    const clientData = {
+        nombre: $('#clientName').val(),
+        direccion: $('#clientAddress').val(),
+        email: $('#clientEmail').val(),
+        telefono: $('#clientPhone').val()
+    };
 
-// Función para actualizar un cliente
-function updateClient(id, client) {
-    fetch(`/api/clientes/${id}`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(client)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Error updating client');
+    $.ajax({
+        url: '/api/clientes',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(clientData),
+        success: function() {
+            loadClientData();
+            $('#clientForm').hide(); // Ocultar el formulario después de añadir
+            $('#overlay').hide();
         }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Client updated successfully:', data);
-        // Aquí puedes actualizar la UI o hacer cualquier otra cosa que necesites
-    })
-    .catch(error => {
-        console.error('Error:', error);
     });
 }
 
@@ -151,6 +124,18 @@ function updateClient() {
             loadClientData();
             $('#clientForm').hide(); // Ocultar el formulario después de actualizar
             $('#overlay').hide();
+        }
+    });
+}
+
+// Eliminar un cliente
+function deleteClient() {
+    const id = $(this).data('id');
+    $.ajax({
+        url: `/api/clientes/${id}`,
+        method: 'DELETE',
+        success: function() {
+            loadClientData();
         }
     });
 }
@@ -265,18 +250,6 @@ function updateDetail() {
     });
 }
 
-// Eliminar un cliente
-function deleteClient() {
-    const id = $(this).data('id');
-    $.ajax({
-        url: `/api/clientes/${id}`,
-        method: 'DELETE',
-        success: function() {
-            loadClientData();
-        }
-    });
-}
-
 // Eliminar un detalle de venta
 function deleteDetail() {
     const id = $(this).data('id');
@@ -289,25 +262,10 @@ function deleteDetail() {
     });
 }
 
-// Eventos para añadir cliente y detalle de venta
-$('#addClientBtn').click(showAddClientForm);
-$('#addDetailBtn').click(showAddDetailForm);
-
-// Ocultar el formulario al hacer clic en cancelar
-$('#cancelClientBtn').click(function() {
-    $('#clientForm').hide();
-    $('#overlay').hide();
-});
-
-$('#cancelDetailBtn').click(function() {
-    $('#detailForm').hide();
-    $('#overlay').hide();
-});
-
-// Función para cargar datos de facturas
+// Cargar datos de facturas
 function loadFacturaData() {
     $.ajax({
-        url: '/api/factura',
+        url: '/api/facturas',
         method: 'GET',
         success: function(data) {
             $('#facturaTable').empty();
@@ -318,46 +276,112 @@ function loadFacturaData() {
                         <td>${factura.pedidos_id}</td>
                         <td>${factura.encargado_id}</td>
                         <td>${factura.fecha_factura}</td>
+                        <td>
+                            <button class="btn btn-warning edit-factura" data-id="${factura.id_factura}">Editar</button>
+                            <button class="btn btn-danger delete-factura" data-id="${factura.id_factura}">Eliminar</button>
+                        </td>
                     </tr>
                 `);
             });
+
+            $('.edit-factura').click(function() {
+                showEditFacturaForm($(this).data('id'));
+            });
+            $('.delete-factura').click(deleteFactura);
         }
     });
 }
 
-// Función para cargar estadísticas
-function loadStatistics() {
-    const chartData1 = {
-        labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'],
-        datasets: [{
-            label: 'Ventas',
-            data: [120, 150, 180, 220, 300, 400],
-            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            borderColor: 'rgba(54, 162, 235, 1)',
-            borderWidth: 1
-        }]
+// Mostrar el formulario para añadir una factura
+function showAddFacturaForm() {
+    $('#facturaForm').data('id', null).show(); // No tiene ID asignado para nueva adición
+    $('#formTitle').text('Añadir Factura');
+    $('#saveFacturaBtn').off('click').on('click', addFactura); // Configura el botón para añadir
+    $('#overlay').show();
+}
+
+// Enviar los datos de la nueva factura al servidor
+function addFactura() {
+    const facturaData = {
+        pedidos_id: $('#pedidoId').val(),
+        encargado_id: $('#encargadoId').val(),
+        fecha_factura: $('#facturaDate').val()
     };
 
-    const chartData2 = {
-        labels: ['Producto A', 'Producto B', 'Producto C'],
-        datasets: [{
-            label: 'Cantidad Vendida',
-            data: [300, 450, 120],
-            backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(75, 192, 192, 0.2)'],
-            borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(75, 192, 192, 1)'],
-            borderWidth: 1
-        }]
-    };
-
-    const ctx1 = document.getElementById('chart1').getContext('2d');
-    const chart1 = new Chart(ctx1, {
-        type: 'line',
-        data: chartData1
+    $.ajax({
+        url: '/api/facturas',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(facturaData),
+        success: function() {
+            loadFacturaData();
+            $('#facturaForm').hide(); // Ocultar el formulario después de añadir
+            $('#overlay').hide();
+        }
     });
+}
 
-    const ctx2 = document.getElementById('chart2').getContext('2d');
-    const chart2 = new Chart(ctx2, {
-        type: 'bar',
-        data: chartData2
+// Mostrar el formulario con datos de la factura a editar
+function showEditFacturaForm(id) {
+    $.ajax({
+        url: `/api/facturas/${id}`,
+        method: 'GET',
+        success: function(factura) {
+            $('#pedidoId').val(factura.pedidos_id);
+            $('#encargadoId').val(factura.encargado_id);
+            $('#facturaDate').val(factura.fecha_factura);
+            $('#facturaForm').data('id', id).show(); // Guardar el ID para actualizar
+            $('#formTitle').text('Editar Factura');
+            $('#saveFacturaBtn').off('click').on('click', updateFactura); // Configura el botón para actualizar
+            $('#overlay').show();
+        }
+    });
+}
+
+// Enviar los datos modificados de la factura al servidor
+function updateFactura() {
+    const id = $('#facturaForm').data('id');
+    const facturaData = {
+        pedidos_id: $('#pedidoId').val(),
+        encargado_id: $('#encargadoId').val(),
+        fecha_factura: $('#facturaDate').val()
+    };
+
+    $.ajax({
+        url: `/api/facturas/${id}`,
+        method: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify(facturaData),
+        success: function() {
+            loadFacturaData();
+            $('#facturaForm').hide(); // Ocultar el formulario después de actualizar
+            $('#overlay').hide();
+        }
+    });
+}
+
+// Eliminar una factura
+function deleteFactura() {
+    const id = $(this).data('id');
+    $.ajax({
+        url: `/api/facturas/${id}`,
+        method: 'DELETE',
+        success: function() {
+            loadFacturaData();
+        }
+    });
+}
+
+// Cargar estadísticas
+function loadStatistics() {
+    $.ajax({
+        url: '/api/estadisticas',
+        method: 'GET',
+        success: function(data) {
+            // Renderizar las estadísticas
+            $('#totalClientes').text(data.totalClientes);
+            $('#totalVentas').text(data.totalVentas);
+            $('#totalFacturas').text(data.totalFacturas);
+        }
     });
 }
