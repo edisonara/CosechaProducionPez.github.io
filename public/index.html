@@ -4,9 +4,64 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        * {
+            border: none;
+            margin: 0;
+        }
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+        body {
+            /* Se establece un fondo radial que será visible detrás del formulario */
+            background: radial-gradient(#555, #111);
+        }
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1; /* Asegura que el canvas esté detrás */
+        }
+        .container {
+            position: relative; /* Permite que el formulario esté por encima del canvas */
+            z-index: 2; /* Asegura que el formulario esté por encima del canvas */
+            background: rgba(255, 255, 255, 0.9); /* Fondo blanco semitransparente para el formulario */
+            padding: 20px;
+            border-radius: 10px; /* Bordes redondeados para el formulario */
+        }
+        .ui {
+            display: none;
+            position: fixed;
+            z-index: 5;
+            bottom: 0;
+            left: 0;
+            width: 120px;
+            padding: 10px;
+            background: rgba(255,255,255,0.7);
+        }
+        .ui p {
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .ui span.zoom {
+            cursor: pointer;
+        }
+        .ui span.zoom:hover {
+            background: black;
+            color: white;
+        }
+    </style>
     <title>Login</title>
 </head>
 <body>
+    <canvas></canvas> <!-- Se añade el canvas aquí para que ocupe toda la pantalla -->
+
     <div class="container">
         <h2>Login</h2>
         <form action="/login" method="post">
@@ -21,5 +76,186 @@
             <button type="submit" class="btn btn-primary">Login</button>
         </form>
     </div>
+
+    <div class="ui">
+        <p class="zoom">
+            <span class="zoom zoomin">+</span>
+            <span class="zoom zoomout">-</span>
+        </p>
+        <p class="zoomlevel">
+            <span class="percent">100</span> % - (<span class="width"></span>px)(<span class="height"></span>px)
+        </p>
+        <p>Dead: <span class="dead">0</span></p>
+        <p>Alive: <span class="alive">0</span></p>
+        <p>Drawn: <span class="drawn">0</span></p>
+        <p><span class="fps">0</span> FPS</p>
+        <a class="save" href="" download="capture.png">Save</a>
+    </div>
+
+    <script>
+        var App = {};
+
+        App.setup = function() {
+            var canvas = document.createElement('canvas');
+            this.filename = "twopointfive";
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            this.canvas = canvas;
+            document.body.appendChild(canvas);
+            this.ctx = this.canvas.getContext('2d');
+            this.width = this.canvas.width;
+            this.height = this.canvas.height;
+            this.dataToImageRatio = 1;
+            this.ctx.imageSmoothingEnabled = false;
+            this.ctx.webkitImageSmoothingEnabled = false;
+            this.ctx.msImageSmoothingEnabled = false;
+            this.xC = this.width / 2;
+            this.yC = this.height / 2;
+            this.stepCount = 0;
+            this.particles = [];
+            this.lifespan = 800;
+            this.popPerBirth = 3;
+            this.maxPop = 300;
+            this.birthFreq = 1;
+            this.grid = [];
+            this.triangleRad = 250;
+            var r = this.triangleRad;
+            this.grid.push({x: -r * Math.sqrt(3)/2, y: 0, spotIndex: 1});
+            this.grid.push({x: r, y: -r, spotIndex: 2});
+            this.grid.push({x: r, y: r, spotIndex: 3});
+            this.gridMaxIndex = 3;
+            this.drawnInLastFrame = 0;
+            this.deathCount = 0;
+            this.initDraw();
+        };
+
+        App.evolve = function() {
+            var time1 = performance.now();
+            this.stepCount++;
+            var angle = this.stepCount / 800,
+                r = this.triangleRad;
+            this.grid[0].x = r * Math.cos(angle);
+            this.grid[0].y = r * Math.sin(angle);
+            angle += 2 * Math.PI / 3;
+            this.grid[1].x = r * Math.cos(angle);
+            this.grid[1].y = r * Math.sin(angle);
+            angle += 2 * Math.PI / 3;
+            this.grid[2].x = r * Math.cos(angle);
+            this.grid[2].y = r * Math.sin(angle);
+            if (this.stepCount % this.birthFreq == 0 && (this.particles.length + this.popPerBirth) < this.maxPop) {
+                this.birth();
+            }
+            App.move();
+            App.draw();
+            var time2 = performance.now();
+            document.getElementsByClassName('dead')[0].textContent = this.deathCount;
+            document.getElementsByClassName('alive')[0].textContent = this.particles.length;
+            document.getElementsByClassName('fps')[0].textContent = Math.floor(1000 / (time2 - time1));
+            document.getElementsByClassName('drawn')[0].textContent = this.drawnInLastFrame;
+        };
+
+        App.birth = function() {
+            var x, y;
+            var gridSpotIndex = Math.floor(Math.random() * this.gridMaxIndex),
+                gridSpot = this.grid[gridSpotIndex];
+            x = 300 * (2 * Math.random() - 1), y = 300 * (2 * Math.random() - 1);
+            var particle = {
+                hue: 230,
+                sat: 100,
+                lum: 30 + Math.floor(20 * Math.random()),
+                x: x, y: y,
+                xLast: x, yLast: y,
+                xSpeed: 0, ySpeed: 0,
+                age: 0,
+                attractorIndex: gridSpotIndex,
+                name: 'seed-' + Math.ceil(10000000 * Math.random())
+            };
+            this.particles.push(particle);
+        };
+
+        App.move = function() {
+            for (var i = 0; i < this.particles.length; i++) {
+                var p = this.particles[i];
+                p.xLast = p.x; p.yLast = p.y;
+                var index = p.attractorIndex,
+                    gridSpot = this.grid[index];
+                var prob = 0.55 * Math.abs(Math.sin(this.stepCount / 40));
+                prob = Math.pow(prob, 3);
+                if (Math.random() < prob) {
+                    p.attractorIndex = Math.floor(Math.random() * this.gridMaxIndex);
+                    var k = 0.8, visc = 0.4;
+                    var dx = p.x - gridSpot.x,
+                        dy = p.y - gridSpot.y,
+                        dist = Math.sqrt(dx * dx + dy * dy);
+                    var xAcc = -k * dx,
+                        yAcc = -k * dy;
+                    p.xSpeed += xAcc; p.ySpeed += yAcc;
+                    p.xSpeed *= visc; p.ySpeed *= visc;
+                    p.speed = Math.sqrt(p.xSpeed * p.xSpeed + p.ySpeed * p.ySpeed);
+                    p.dist = dist;
+                    p.x += 0.1 * p.xSpeed; p.y += 0.1 * p.ySpeed;
+                    p.age++;
+                    if (p.age > this.lifespan) {
+                        this.kill(p.name);
+                        this.deathCount++;
+                    }
+                }
+            }
+        };
+
+        App.initDraw = function() {
+            this.ctx.beginPath();
+            this.ctx.rect(0, 0, this.width, this.height);
+            this.ctx.fillStyle = 'black';
+            this.ctx.fill();
+            this.ctx.closePath();
+        };
+
+        App.draw = function() {
+            this.drawnInLastFrame = 0;
+            if (!this.particles.length) return false;
+            this.ctx.beginPath();
+            this.ctx.rect(0, 0, this.width, this.height);
+            this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            this.ctx.fill();
+            this.ctx.closePath();
+            for (var i = 0; i < this.particles.length; i++) {
+                var p = this.particles[i];
+                var h = p.hue,
+                    s = p.sat,
+                    l = p.lum,
+                    a = 1;
+                var last = this.dataXYtoCanvasXY(p.xLast, p.yLast),
+                    now = this.dataXYtoCanvasXY(p.x, p.y);
+                this.ctx.beginPath();
+                this.ctx.strokeStyle = 'hsla(' + h + ', ' + s + '%, ' + l + '%, ' + a + ')';
+                this.ctx.fillStyle = 'hsla(' + h + ', ' + s + '%, ' + l + '%, ' + a + ')';
+                this.ctx.moveTo(last.x, last.y);
+                this.ctx.lineTo(now.x, now.y);
+                var rDrawn = Math.max(0.3, 2 - Math.sqrt(p.x * p.x + p.y * p.y) / 50);
+                this.ctx.lineWidth = 1.5 * rDrawn * this.dataToImageRatio;
+                this.ctx.stroke();
+                this.ctx.closePath();
+                this.drawnInLastFrame++;
+            }
+        };
+
+        App.dataXYtoCanvasXY = function(x, y) {
+            var zoom = 1.1;
+            var xx = this.xC + x * zoom * this.dataToImageRatio,
+                yy = this.yC + y * zoom * this.dataToImageRatio;
+            return {x: xx, y: yy};
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            App.setup();
+            App.draw();
+            var frame = function() {
+                App.evolve();
+                requestAnimationFrame(frame);
+            };
+            frame();
+        });
+    </script>
 </body>
 </html>
