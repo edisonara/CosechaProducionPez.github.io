@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <title>General User</title>
+</head>
+<body>
+    <!-- Showcase Section -->
+    <section id="showcase" class="text-center py-5 bg-dark text-white">
+        <div class="container">
+            <h1 class="display-4 font-weight-bold">Welcome to the General User Dashboard</h1>
+            <p class="lead">Here you can view and manage all available data.</p>
+        </div>
+    </section>
+
+    <div class="container mt-5">
+        <h2>Run Custom SQL Query</h2>
+        <form id="queryForm">
+            <div class="form-group">
+                <label for="query">SQL Query:</label>
+                <textarea id="query" class="form-control" rows="4" placeholder="Enter your SQL query here"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Run Query</button>
+        </form>
+
+        <h3 class="mt-5">Query Results</h3>
+        <div id="results" class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr id="tableHeader">
+                        <!-- Headers will be inserted here -->
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Data rows will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('queryForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const query = document.getElementById('query').value;
+
+            fetch('/general/query', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ query })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const tableHeader = document.getElementById('tableHeader');
+                const tableBody = document.getElementById('tableBody');
+
+                // Clear previous results
+                tableHeader.innerHTML = '';
+                tableBody.innerHTML = '';
+
+                if (data.length > 0) {
+                    // Create table headers
+                    const headers = Object.keys(data[0]);
+                    headers.forEach(header => {
+                        const th = document.createElement('th');
+                        th.textContent = header;
+                        tableHeader.appendChild(th);
+                    });
+
+                    // Create table rows
+                    data.forEach(row => {
+                        const tr = document.createElement('tr');
+                        headers.forEach(header => {
+                            const td = document.createElement('td');
+                            td.textContent = row[header];
+                            tr.appendChild(td);
+                        });
+                        tableBody.appendChild(tr);
+                    });
+                } else {
+                    tableBody.innerHTML = '<tr><td colspan="100%">No results found</td></tr>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+
+    <!-- Include Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

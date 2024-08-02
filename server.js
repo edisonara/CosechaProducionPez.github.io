@@ -71,7 +71,32 @@ app.get('/admin-comercializacion', (req, res) => {
 app.get('/general', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'general.html'));
 });
+app.post('/general/query', async (req, res) => {
+    const { query } = req.body;
 
+    if (!query) {
+        return res.status(400).send('Query parameter is required');
+    }
+
+    const client = new Client({
+        host: '4.203.136.126',
+        port: 5432,
+        user: 'user_rol_general',
+        password: '123',
+        database: 'ProyectoG6'
+    });
+
+    try {
+        await client.connect();
+        const result = await client.query(query);
+        res.json(result.rows);
+    } catch (err) {
+        console.error('Query error', err.stack);
+        res.status(500).send('Error executing query');
+    } finally {
+        await client.end();
+    }
+});
 // Helper function to create a new client and connect to the database
 const createDbClient = (user, password) => {
     return new Client({
